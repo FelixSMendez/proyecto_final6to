@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Editar Usuario del Sistema</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+
+<div class="container">
+  <h1 class="mb-4">Editar Usuario</h1>
+
+  @if($errors->any())
+    <div class="alert alert-danger">
+      <ul>
+        @foreach($errors->all() as $error)
+          <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+  @endif
+
+  <form action="{{ route('usuariosistema.update', $usuariosistema) }}" method="POST">
+    @csrf
+    @method('PUT')
+
+    <div class="mb-3">
+      <label for="usuario" class="form-label">Usuario</label>
+      <input type="text" name="usuario" id="usuario" class="form-control" value="{{ $usuariosistema->usuario }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="contrasena" class="form-label">Contraseña</label>
+      <input type="password" name="contrasena" id="contrasena" class="form-control" value="{{ $usuariosistema->contrasena }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="id_empleado" class="form-label">Empleado</label>
+      <select name="id_empleado" id="id_empleado" class="form-select">
+        <option value="">-- Ninguno --</option>
+        @foreach($empleados as $empleado)
+          <option value="{{ $empleado->id }}" {{ $usuariosistema->id_empleado == $empleado->id ? 'selected' : '' }}>
+            {{ $empleado->nombre }}
+          </option>
+        @endforeach
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="id_cliente" class="form-label">Cliente</label>
+      <select name="id_cliente" id="id_cliente" class="form-select">
+        <option value="">-- Ninguno --</option>
+        @foreach($clientes as $cliente)
+          <option value="{{ $cliente->id }}" {{ $usuariosistema->id_cliente == $cliente->id ? 'selected' : '' }}>
+            {{ $cliente->nombre }}
+          </option>
+        @endforeach
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+    <a href="{{ route('usuariosistema.index') }}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+</body>
+</html>
