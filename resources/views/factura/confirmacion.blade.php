@@ -137,9 +137,9 @@
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <button class="btn btn-success w-100" onclick="descargarFactura()">
+                    <a href="{{ route('pdf.factura.descargar', $factura->id) }}" class="btn btn-success w-100" target="_blank">
                         <i class="fas fa-download me-2"></i> Descargar Factura
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -158,10 +158,5 @@
     </div>
 </div>
 
-<script>
-function descargarFactura() {
-    alert('La funcionalidad de descarga de PDF está en desarrollo.');
-}
-</script>
 
 @endsection

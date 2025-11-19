@@ -47,6 +47,11 @@ Route::get('/factura/{id}/pago', [FacturaController::class, 'showPago'])->name('
 Route::post('/factura/{id}/pago', [FacturaController::class, 'guardarPago'])->name('factura.guardarPago');
 Route::get('/factura/{id}/confirmacion', [FacturaController::class, 'confirmacion'])->name('factura.confirmacion');
 
+// ✅ RUTAS PÚBLICAS - Cualquiera puede descargar facturas y cotizaciones
+Route::get('/pdf/factura/{id}/descargar', [App\Http\Controllers\PdfController::class, 'descargarFactura'])->name('pdf.factura.descargar');
+Route::get('/pdf/factura/{id}/preview', [App\Http\Controllers\PdfController::class, 'previewFactura'])->name('pdf.factura.preview');
+Route::get('/pdf/cotizacion/{id}/descargar', [App\Http\Controllers\PdfController::class, 'descargarCotizacion'])->name('pdf.cotizacion.descargar');
+Route::get('/pdf/cotizacion/{id}/preview', [App\Http\Controllers\PdfController::class, 'previewCotizacion'])->name('pdf.cotizacion.preview');
 
 // ====================================
 // RUTAS PARA EMPLEADOS (usuariosistema)

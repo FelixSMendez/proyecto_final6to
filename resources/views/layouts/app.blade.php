@@ -23,7 +23,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="{{ auth('employee')->check() ? route('dashboard') : route('catalogo.index') }}">
-                <i class="fas fa-paint-brush me-2"></i> PAINTS
+            <img src="{{ asset('images/logo-paints.png') }}" alt="PAINTS Logo" style="height: 40px; margin-right: 10px; vertical-align: middle; border-radius: 4px;">
+                PAINTS
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
