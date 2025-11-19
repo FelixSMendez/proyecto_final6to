@@ -13,9 +13,9 @@ return new class extends Migration
             $table->integer('correlativo');
             $table->char('letra_serie', 1)->nullable();
             $table->date('fecha');
-
+            $table->decimal('total', 10, 2);
             $table->unsignedBigInteger('id_cliente');
-            $table->unsignedBigInteger('id_empleado');
+            $table->unsignedBigInteger('id_empleado')->nullable();
             $table->unsignedBigInteger('id_sucursal');
             $table->enum('estado', ['pendiente', 'pagada', 'cancelada'])->default('pendiente');
             $table->foreign('id_cliente')->references('id')->on('cliente');

@@ -94,9 +94,29 @@
                             <h4 class="text-primary">Q{{ number_format($total, 2) }}</h4>
                         </div>
 
-                        <a href="{{ route('factura.showPago', 1) }}" class="btn btn-success btn-lg w-100">
-                            <i class="fas fa-lock me-2"></i> Proceder al Pago
-                        </a>
+                        <form action="{{ route('factura.store') }}" method="POST" class="w-100">
+                            @csrf
+    
+                            @auth('cliente')
+                                {{-- Si el cliente está autenticado, envía su ID automáticamente --}}
+                                <input type="hidden" name="id_cliente" value="{{ auth('cliente')->id() }}">
+                            @else
+                                {{-- Si no está autenticado, muestra un selector --}}
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Selecciona tu Usuario</label>
+                                    <select name="id_cliente" class="form-select" required>
+                                        <option value="">-- Seleccionar Cliente --</option>
+                                        @foreach(\App\Models\UsuarioCliente::all() as $cliente)
+                                            <option value="{{ $cliente->id }}">{{ $cliente->usuario }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endauth
+
+                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-lock me-2"></i> Proceder al Pago
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

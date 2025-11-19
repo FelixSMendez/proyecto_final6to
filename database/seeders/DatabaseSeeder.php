@@ -27,5 +27,15 @@ class DatabaseSeeder extends Seeder
             UsuarioClientesSeeder::class, // Sexto: usuarios de clientes (depende de cliente)
         ]);
 
+        $this->call([
+            TipoproductoSeeder::class,      // Séptimo: tipos de producto
+            MarcaSeeder::class,             // Octavo: marcas
+            TipomedidaSeeder::class,        // Noveno: tipos de medida
+            ProductoSeeder::class,          // Décimo: productos (depende de tipo de producto y marca)
+            DetalleproductoSeeder::class,   // Undécimo: detalles de producto (depende de producto y tipo de medida)
+            PrecioSeeder::class,            // Duodécimo: precios (depende de detalle de producto)
+            TipopagoSeeder::class           //Treceavo: tipo de pagos
+        ]);
+
     }
 }

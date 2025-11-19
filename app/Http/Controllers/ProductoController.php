@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DetalleProducto;
 use App\Models\TipoProducto;
+use App\Models\TipoMedida;
 use App\Models\Marca;
 use Illuminate\Http\Request;
 

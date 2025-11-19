@@ -18,6 +18,14 @@ class Factura extends Model
         'id_cliente',
         'id_empleado',
         'id_sucursal',
+        'total',
+        'estado',
+    ];
+
+    protected $casts = [
+        'fecha' => 'datetime',
+        'total' => 'float',
+        'estado' => 'string',
     ];
 
     public function cliente()
@@ -33,5 +41,15 @@ class Factura extends Model
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class, 'id_sucursal');
+    }
+
+    public function detalles()
+    {
+        return $this->hasMany(DetalleFactura::class, 'id_factura');
+    }
+
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class, 'id_factura');
     }
 }

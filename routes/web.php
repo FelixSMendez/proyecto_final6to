@@ -40,6 +40,15 @@ Route::middleware(['auth:cliente'])->group(function () {
 });
 
 // ====================================
+// FACTURACIÓN - CLIENTE WEB (Sin auth)
+// ====================================
+Route::post('/factura', [FacturaController::class, 'store'])->name('factura.store');
+Route::get('/factura/{id}/pago', [FacturaController::class, 'showPago'])->name('factura.showPago');
+Route::post('/factura/{id}/pago', [FacturaController::class, 'guardarPago'])->name('factura.guardarPago');
+Route::get('/factura/{id}/confirmacion', [FacturaController::class, 'confirmacion'])->name('factura.confirmacion');
+
+
+// ====================================
 // RUTAS PARA EMPLEADOS (usuariosistema)
 // ====================================
 Route::middleware(['auth:employee'])->group(function () {
@@ -47,6 +56,12 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/dashboard/digitador', fn() => view('dashboard.digitador'))->name('dashboard.digitador');
     Route::get('/dashboard/cajero', fn() => view('dashboard.cajero'))->name('dashboard.cajero');
     Route::get('/dashboard/gerente', fn() => view('dashboard.gerente'))->name('dashboard.gerente');
+
+    // Solo cajeros
+    Route::middleware('es_cajero')->group(function () {
+        Route::get('/factura/tienda/crear', [FacturaController::class, 'createTienda'])->name('factura.tienda.create');
+        Route::post('/factura/tienda', [FacturaController::class, 'storeTienda'])->name('factura.tienda.store');
+    });
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

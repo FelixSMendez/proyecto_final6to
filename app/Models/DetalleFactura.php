@@ -2,22 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DetalleFactura extends Model
 {
-    use HasFactory;
-
-    // Forzar el nombre singular de la tabla
     protected $table = 'detallefactura';
+    public $timestamps = true;
 
     protected $fillable = [
         'id_factura',
-        'id_producto',
+        'id_detalleproducto',  
         'cantidad',
         'precio_unitario',
         'descuento_aplicado',
+        'subtotal',
     ];
 
     public function factura()
@@ -25,8 +23,8 @@ class DetalleFactura extends Model
         return $this->belongsTo(Factura::class, 'id_factura');
     }
 
-    public function producto()
+    public function detalleProducto()
     {
-        return $this->belongsTo(Producto::class, 'id_producto');
+        return $this->belongsTo(DetalleProducto::class, 'id_detalleproducto');
     }
 }

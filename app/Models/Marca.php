@@ -15,4 +15,11 @@ class Marca extends Model
         'marca',
         'descripcion',
     ];
+
+    public function detalleProductos()
+    {
+        return $this->hasMany(DetalleProducto::class, 'id_marca');
+    }
+
+    
 }
