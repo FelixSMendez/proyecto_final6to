@@ -22,7 +22,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{{ route('dashboard') }}">
+            <a class="navbar-brand fw-bold" href="{{ auth('employee')->check() ? route('dashboard') : route('catalogo.index') }}">
                 <i class="fas fa-paint-brush me-2"></i> PAINTS
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -33,17 +33,33 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle me-1"></i> 
-                            @auth('employee')
-                                {{ auth('employee')->user()->usuario }}
-                            @elseauth('cliente')
-                                {{ auth('cliente')->user()->usuario }}
-                            @else
-                                Usuario
-                            @endauth
+                                @auth('employee')
+                                    {{ auth('employee')->user()->usuario }}
+                                @elseauth('cliente')
+                                    {{ auth('cliente')->user()->usuario }}
+                                @else
+                                    Cuenta
+                                @endauth
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+        
+                        <!-- ✅ MI PERFIL - SOLO SI ESTÁ AUTENTICADO -->
+                        @auth('employee')
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                <i class="fas fa-user me-2"></i> Mi Perfil
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
+                        @endauth
+        
+                        @auth('cliente')
+                            <li><a class="dropdown-item" href="{{ route('cliente.dashboard') }}">
+                                <i class="fas fa-user me-2"></i> Mi Perfil
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        @endauth
+
+                        <!-- ✅ CERRAR SESIÓN - SOLO SI ESTÁ AUTENTICADO -->
+                        @auth('employee')
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -52,6 +68,30 @@
                                     </button>
                                 </form>
                             </li>
+                        @endauth
+
+                        @auth('cliente')
+                            <li>
+                                <form method="POST" action="{{ route('cliente.logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        @endauth
+
+                        <!-- ✅ INICIAR SESIÓN - SOLO SI NO ESTÁ AUTENTICADO -->
+                        @if(!isset($showLoginOptions) || $showLoginOptions)
+                            @if(!auth('employee')->check() && !auth('cliente')->check())
+                                <li><a class="dropdown-item" href="{{ route('login') }}">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Login Empleado
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ route('cliente.login') }}">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Login Cliente
+                                </a></li>
+                            @endif
+                        @endif
                         </ul>
                     </li>
                 </ul>

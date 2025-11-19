@@ -10,17 +10,17 @@ class Precio extends Model
     use HasFactory;
 
     protected $table = 'precio';
-
     protected $fillable = [
+        'id_detalleproducto',
         'tipo',
+        'cantidadminima',
+        'cantidadmaxima',
         'precioVenta',
-        'descuento',
-        'id_tipoMedida',
+        'tipo_cliente'
     ];
 
-    // Relación con TipoMedida
-    public function tipoMedida()
+    public function detalleProducto()
     {
-        return $this->belongsTo(TipoMedida::class, 'id_tipoMedida');
+        return $this->belongsTo(DetalleProducto::class, 'id_detalleproducto');
     }
 }

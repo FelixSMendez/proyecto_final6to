@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Producto;
+use App\Models\DetalleProducto;
 use Illuminate\Http\Request;
 
 class CarritoController extends Controller
@@ -22,28 +22,37 @@ class CarritoController extends Controller
      * Agregar producto al carrito
      */
     public function agregar(Request $request, $id)
-    {
-        $producto = Producto::findOrFail($id);
-        $cantidad = $request->input('cantidad', 1);
+{
+    $detalleProducto = DetalleProducto::with(['producto', 'marca', 'tipoMedida', 'precios'])->findOrFail($id);
+    $cantidad = $request->input('cantidad', 1);
 
-        $carrito = session()->get('carrito', []);
+    // Obtener precio correctamente
+    $precio = $detalleProducto->precios()
+        ->where('tipo_cliente', 'minorista')
+        ->first()?->precioVenta ?? 0;
 
-        if (isset($carrito[$id])) {
-            $carrito[$id]['cantidad'] += $cantidad;
-        } else {
-            $carrito[$id] = [
-                'id' => $producto->id,
-                'nombre' => $producto->nombre,
-                'precio' => $producto->precio,
-                'cantidad' => $cantidad,
-                'imagen' => $producto->imagen ?? 'placeholder.jpg',
-            ];
-        }
+    $carrito = session()->get('carrito', []);
 
-        session()->put('carrito', $carrito);
-
-        return redirect()->back()->with('success', 'Producto agregado al carrito');
+    if (isset($carrito[$id])) {
+        $carrito[$id]['cantidad'] += $cantidad;
+    } else {
+        $carrito[$id] = [
+            'id_detalle' => $detalleProducto->id,
+            'id_producto' => $detalleProducto->id_producto,
+            'nombre' => $detalleProducto->producto->nombre,
+            'descripcion' => $detalleProducto->descripcion,
+            'marca' => $detalleProducto->marca->nombre ?? 'N/A',
+            'medida' => $detalleProducto->tipoMedida->nombre ?? 'N/A',
+            'color' => $detalleProducto->color_acabado,
+            'precio' => $precio,  // ✅ AQUÍ VA EL PRECIO
+            'cantidad' => $cantidad,
+        ];
     }
+
+    session()->put('carrito', $carrito);
+
+    return redirect()->back()->with('success', 'Producto agregado al carrito');
+}
 
     /**
      * Actualizar cantidad en carrito
@@ -83,7 +92,7 @@ class CarritoController extends Controller
     }
 
     /**
-     * Calcular total
+     * Calcular total del carrito
      */
     private function calcularTotal($carrito)
     {

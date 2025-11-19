@@ -2,102 +2,111 @@
 
 @section('content')
 <div class="container py-5">
-    <h2 class="mb-4">
-        <i class="fas fa-shopping-cart me-2"></i> Mi Carrito
-    </h2>
+    <h2 class="mb-4">🛒 Mi Carrito</h2>
 
     @if(count($carrito) > 0)
         <div class="row">
-            <!-- Lista de productos -->
-            <div class="col-lg-8 mb-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="bg-light">
+            <!-- TABLA DE PRODUCTOS -->
+            <div class="col-lg-8">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($carrito as $id => $item)
+                                @php
+                                    $subtotal = $item['precio'] * $item['cantidad'];
+                                @endphp
                                 <tr>
-                                    <th>Producto</th>
-                                    <th>Precio</th>
-                                    <th>Cantidad</th>
-                                    <th>Subtotal</th>
-                                    <th>Acción</th>
+                                    <td>
+                                        <strong>{{ $item['nombre'] }}</strong><br>
+                                        <small class="text-muted">
+                                            {{ $item['marca'] }} | {{ $item['medida'] }} | {{ $item['color'] }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <strong>Q{{ number_format($item['precio'], 2) }}</strong>
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('carrito.actualizar', $id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <div class="input-group input-group-sm" style="width: 100px;">
+                                                <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" class="form-control">
+                                                <button type="submit" class="btn btn-outline-secondary">✓</button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <strong>Q{{ number_format($subtotal, 2) }}</strong>
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('carrito.quitar', $id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($carrito as $id => $item)
-                                    <tr>
-                                        <td>
-                                            <strong>{{ $item['nombre'] }}</strong>
-                                        </td>
-                                        <td>
-                                            Q{{ number_format($item['precio'], 2) }}
-                                        </td>
-                                        <td>
-                                            <form action="{{ route('carrito.actualizar', $id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <div class="input-group input-group-sm">
-                                                    <input type="number" name="cantidad" class="form-control" value="{{ $item['cantidad'] }}" min="1" max="100" style="width: 60px;">
-                                                    <button class="btn btn-outline-secondary btn-sm" type="submit">Actualizar</button>
-                                                </div>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <strong>Q{{ number_format($item['precio'] * $item['cantidad'], 2) }}</strong>
-                                        </td>
-                                        <td>
-                                            <form action="{{ route('carrito.quitar', $id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
-                <a href="{{ route('catalogo.index') }}" class="btn btn-outline-primary mt-3">
+                <a href="{{ route('catalogo.index') }}" class="btn btn-outline-primary">
                     <i class="fas fa-arrow-left me-2"></i> Seguir Comprando
                 </a>
             </div>
 
-            <!-- Resumen de compra -->
+            <!-- RESUMEN DE COMPRA -->
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Resumen de Compra</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title fw-bold mb-3">Resumen de Compra</h5>
-
+                        @php
+                            $subtotal = 0;
+                            foreach($carrito as $item) {
+                                $subtotal += $item['precio'] * $item['cantidad'];
+                            }
+                            $envio = 0; // Puedes cambiar esto
+                            $total = $subtotal + $envio;
+                        @endphp
+                        
                         <div class="d-flex justify-content-between mb-2">
                             <span>Subtotal:</span>
-                            <strong>Q{{ number_format($total, 2) }}</strong>
+                            <strong>Q{{ number_format($subtotal, 2) }}</strong>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
+                        <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
                             <span>Envío:</span>
-                            <strong>Q0.00</strong>
+                            <strong>Q{{ number_format($envio, 2) }}</strong>
                         </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-3">
-                            <strong>Total:</strong>
-                            <strong class="text-primary" style="font-size: 1.3rem;">Q{{ number_format($total, 2) }}</strong>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h5>Total:</h5>
+                            <h4 class="text-primary">Q{{ number_format($total, 2) }}</h4>
                         </div>
 
-                        <button class="btn btn-success btn-lg w-100 mb-2" disabled>
+                        <a href="{{ route('factura.showPago', 1) }}" class="btn btn-success btn-lg w-100">
                             <i class="fas fa-lock me-2"></i> Proceder al Pago
-                        </button>
-                        <small class="text-muted d-block text-center">(Función de pago próximamente)</small>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     @else
         <div class="alert alert-info text-center py-5">
-            <i class="fas fa-shopping-cart fa-5x mb-3 text-muted"></i>
-            <h4>Tu carrito está vacío</h4>
-            <p class="text-muted">Explora nuestro catálogo y agrega productos a tu carrito</p>
-            <a href="{{ route('catalogo.index') }}" class="btn btn-primary mt-3">
-                <i class="fas fa-shopping-bag me-2"></i> Ver Catálogo
+            <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+            <p class="mb-3">Tu carrito está vacío</p>
+            <a href="{{ route('catalogo.index') }}" class="btn btn-primary">
+                Ir al Catálogo
             </a>
         </div>
     @endif

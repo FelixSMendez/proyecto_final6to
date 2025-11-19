@@ -10,33 +10,15 @@ class Producto extends Model
     use HasFactory;
 
     protected $table = 'producto';
-
-    protected $fillable = [
-        'nombre',
-        'stock',
-        'id_tipoProducto',
-        'id_proveedor',
-        'id_detalleProducto',
-        'id_precio',
-    ];
+    protected $fillable = ['nombre', 'id_tipoProducto', 'descripcion'];
 
     public function tipoProducto()
     {
         return $this->belongsTo(TipoProducto::class, 'id_tipoProducto');
     }
 
-    public function proveedor()
+    public function detalles()
     {
-        return $this->belongsTo(Proveedor::class, 'id_proveedor');
-    }
-
-    public function detalleProducto()
-    {
-        return $this->belongsTo(DetalleProducto::class, 'id_detalleProducto');
-    }
-
-    public function precio()
-    {
-        return $this->belongsTo(Precio::class, 'id_precio');
+        return $this->hasMany(DetalleProducto::class, 'id_producto');
     }
 }

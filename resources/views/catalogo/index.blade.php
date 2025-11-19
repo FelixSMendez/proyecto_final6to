@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid py-5" style="background-color: #f8f9fa;">
-    <!-- Header con Hero -->
+    <!-- Header -->
     <div class="row mb-5">
         <div class="col-12">
             <div class="p-5 text-center text-white rounded" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 250px; display: flex; flex-direction: column; justify-content: center;">
@@ -55,7 +55,7 @@
                                 @foreach($marcas as $marca)
                                     <label class="list-group-item">
                                         <input class="form-check-input me-2" type="radio" name="marca" value="{{ $marca->id }}" {{ request('marca') == $marca->id ? 'checked' : '' }}>
-                                        {{ $marca->marca }}
+                                        {{ $marca->nombre }}
                                     </label>
                                 @endforeach
                             </div>
@@ -82,67 +82,60 @@
 
         <!-- PRODUCTOS GRID -->
         <div class="col-lg-9">
-            <!-- Contador de productos -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="mb-0">
-                    <strong>{{ $productos->total() }}</strong> productos encontrados
-                </h5>
+                <h5 class="mb-0"><strong>{{ $detalles->total() }}</strong> productos encontrados</h5>
                 <a href="{{ route('carrito.index') }}" class="btn btn-outline-success">
                     <i class="fas fa-shopping-cart me-2"></i> Ver Carrito
                 </a>
             </div>
 
-            <!-- Grid de productos -->
-            @if($productos->count() > 0)
+            @if($detalles->count() > 0)
                 <div class="row g-4">
-                    @foreach($productos as $producto)
+                    @foreach($detalles as $detalle)
                         <div class="col-md-6 col-lg-4">
                             <div class="card border-0 shadow-sm h-100 transition" style="overflow: hidden;">
-                                <!-- Imagen del producto -->
+                                <!-- Imagen -->
                                 <div style="height: 250px; overflow: hidden; background-color: #f0f0f0; position: relative;">
-                                    @if($producto->imagen)
-                                        <img src="{{ asset('storage/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-100 h-100 object-fit-cover">
-                                    @else
-                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
-                                            <i class="fas fa-image fa-3x"></i>
-                                        </div>
-                                    @endif
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                        <i class="fas fa-image fa-3x"></i>
+                                    </div>
                                     <span class="badge bg-danger position-absolute top-0 end-0 m-2">OFERTA</span>
                                 </div>
 
-                                <!-- Info del producto -->
+                                <!-- Info -->
                                 <div class="card-body d-flex flex-column">
-                                    <h6 class="card-title fw-bold">{{ $producto->nombre }}</h6>
+                                    <h6 class="card-title fw-bold">{{ $detalle->producto->nombre }}</h6>
                                     <p class="card-text text-muted small">
-                                        {{ Str::limit($producto->descripcion, 60) }}
+                                        {{ Str::limit($detalle->descripcion, 60) }}
                                     </p>
 
-                                    <!-- Marca y Tipo -->
+                                    <!-- Detalles -->
                                     <div class="small mb-2">
-                                        <span class="badge bg-light text-dark">{{ $producto->marca->marca ?? 'N/A' }}</span>
-                                        <span class="badge bg-light text-dark">{{ $producto->tipo->tipo ?? 'N/A' }}</span>
+                                        <span class="badge bg-light text-dark">{{ $detalle->marca->nombre ?? 'N/A' }}</span>
+                                        <span class="badge bg-light text-dark">{{ $detalle->tipoMedida->nombre ?? 'N/A' }}</span>
                                     </div>
 
+                                    
                                     <!-- Precio -->
                                     <div class="my-3">
                                         <h5 class="mb-0 text-primary">
-                                            Q{{ number_format($producto->precio, 2) }}
+                                            Q{{ number_format($detalle->obtenerPrecio('minorista'), 2) }}
                                         </h5>
                                         <small class="text-muted">
-                                            Stock: {{ $producto->stock }} unidades
+                                            Color: {{ $detalle->color_acabado ?? 'N/A' }}
                                         </small>
                                     </div>
 
                                     <!-- Botones -->
                                     <div class="mt-auto">
-                                        <a href="{{ route('catalogo.show', $producto->id) }}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                        <a href="{{ route('catalogo.show', $detalle->id) }}" class="btn btn-outline-primary btn-sm w-100 mb-2">
                                             <i class="fas fa-eye me-1"></i> Ver Detalles
                                         </a>
-                                        <form action="{{ route('carrito.agregar', $producto->id) }}" method="POST" class="d-inline w-100">
+                                        <form action="{{ route('carrito.agregar', $detalle->id) }}" method="POST" class="d-inline w-100">
                                             @csrf
-                                            <div class="input-group input-group-sm mb-2">
-                                                <input type="number" name="cantidad" class="form-control" value="1" min="1" max="{{ $producto->stock }}">
-                                                <button class="btn btn-primary" type="submit" {{ $producto->stock <= 0 ? 'disabled' : '' }}>
+                                            <div class="input-group input-group-sm">
+                                                <input type="number" name="cantidad" class="form-control" value="1" min="1">
+                                                <button class="btn btn-primary" type="submit">
                                                     <i class="fas fa-cart-plus"></i> Agregar
                                                 </button>
                                             </div>
@@ -156,12 +149,12 @@
 
                 <!-- Paginación -->
                 <div class="d-flex justify-content-center mt-5">
-                    {{ $productos->links('pagination::bootstrap-4') }}
+                    {{ $detalles->links('pagination::bootstrap-4') }}
                 </div>
             @else
                 <div class="alert alert-info text-center py-5">
                     <i class="fas fa-inbox fa-3x mb-3"></i>
-                    <p class="mb-0">No hay productos que coincidan con los filtros seleccionados</p>
+                    <p class="mb-0">No hay productos que coincidan</p>
                 </div>
             @endif
         </div>
@@ -169,15 +162,7 @@
 </div>
 
 <style>
-    .transition {
-        transition: all 0.3s ease;
-    }
-    .transition:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    }
-    .object-fit-cover {
-        object-fit: cover;
-    }
+    .transition { transition: all 0.3s ease; }
+    .transition:hover { transform: translateY(-5px); box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; }
 </style>
 @endsection
