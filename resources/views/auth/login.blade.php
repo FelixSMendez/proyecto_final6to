@@ -8,17 +8,17 @@
         <!-- Email Address -->
         <div>
             <x-input-label for="usuario" :value="__('Usuario')" />
-            <x-text-input id="usuario" class="block mt-1 w-full" type="usuario" name="usuario" :value="old('usuario')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-text-input id="usuario" class="block mt-1 w-full" type="text" name="usuario" :value="old('usuario')" required autofocus />
+            <x-input-error :messages="$errors->get('usuario')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="contrasena" :value="__('Contraseña')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
+            <x-text-input id="contrasena" class="block mt-1 w-full"
                             type="password"
-                            name="password"
+                            name="contrasena"
                             required autocomplete="current-password" />
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />

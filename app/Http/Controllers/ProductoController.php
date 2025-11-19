@@ -4,72 +4,71 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\TipoProducto;
-use App\Models\Proveedor;
-use App\Models\DetalleProducto;
-use App\Models\Precio;
+use App\Models\Marca;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
-    public function index()
+    /**
+     * Mostrar catálogo de productos
+     */
+    public function index(Request $request)
     {
-        $productos = Producto::with(['tipoProducto','proveedor','detalleProducto','precio'])->get();
-        return view('productos.index', compact('productos'));
+        $query = Producto::query();
+
+        // Filtro por tipo
+        if ($request->filled('tipo')) {
+            $query->where('id_tipoProducto', $request->tipo);
+        }
+
+        // Filtro por marca
+        if ($request->filled('marca')) {
+            $query->where('id_marca', $request->marca);
+        }
+
+        // Búsqueda por nombre
+        if ($request->filled('buscar')) {
+            $query->where('nombre', 'like', '%' . $request->buscar . '%')
+                  ->orWhere('descripcion', 'like', '%' . $request->buscar . '%');
+        }
+
+        // Ordenar
+        $orden = $request->get('orden', 'reciente');
+        switch ($orden) {
+            case 'precio_asc':
+                $query->orderBy('precio', 'asc');
+                break;
+            case 'precio_desc':
+                $query->orderBy('precio', 'desc');
+                break;
+            case 'nombre':
+                $query->orderBy('nombre', 'asc');
+                break;
+            default:
+                $query->orderBy('id', 'desc');
+        }
+
+        // Paginar
+        $productos = $query->paginate(12);
+
+        // Obtener filtros
+        $tipos = TipoProducto::all();
+        $marcas = Marca::all();
+
+        return view('catalogo.index', compact('productos', 'tipos', 'marcas'));
     }
 
-    public function create()
+    /**
+     * Mostrar detalle de producto
+     */
+    public function show($id)
     {
-        $tiposProducto = TipoProducto::all();
-        $proveedores = Proveedor::all();
-        $detalles = DetalleProducto::all();
-        $precios = Precio::all();
+        $producto = Producto::findOrFail($id);
+        $productosSimilares = Producto::where('id_tipoProducto', $producto->id_tipo)
+                                       ->where('id', '!=', $id)
+                                       ->limit(4)
+                                       ->get();
 
-        return view('productos.create', compact('tiposProducto','proveedores','detalles','precios'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'stock' => 'required|integer|min:0',
-            'id_tipoProducto' => 'nullable|exists:tipoproducto,id',
-            'id_proveedor' => 'nullable|exists:proveedor,id',
-            'id_detalleProducto' => 'nullable|exists:detalleproducto,id',
-            'id_precio' => 'nullable|exists:precio,id',
-        ]);
-
-        Producto::create($request->all());
-        return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
-    }
-
-    public function edit(Producto $producto)
-    {
-        $tiposProducto = TipoProducto::all();
-        $proveedores = Proveedor::all();
-        $detalles = DetalleProducto::all();
-        $precios = Precio::all();
-
-        return view('productos.edit', compact('producto','tiposProducto','proveedores','detalles','precios'));
-    }
-
-    public function update(Request $request, Producto $producto)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'stock' => 'required|integer|min:0',
-            'id_tipoProducto' => 'nullable|exists:tipoproducto,id',
-            'id_proveedor' => 'nullable|exists:proveedor,id',
-            'id_detalleProducto' => 'nullable|exists:detalleproducto,id',
-            'id_precio' => 'nullable|exists:precio,id',
-        ]);
-
-        $producto->update($request->all());
-        return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
-    }
-
-    public function destroy(Producto $producto)
-    {
-        $producto->delete();
-        return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
+        return view('catalogo.show', compact('producto', 'productosSimilares'));
     }
 }

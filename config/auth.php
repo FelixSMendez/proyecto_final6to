@@ -40,6 +40,22 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'employee' => [
+        'driver' => 'session',
+        'provider' => 'employees',
+        ],
+
+        'cliente' => [
+        'driver' => 'session',
+        'provider' => 'clientes',
+        ],
+
+        'api' => [
+        'driver' => 'token',
+        'provider' => 'users',
+        'hash' => false,
+        ],
     ],
 
     /*
@@ -64,6 +80,17 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
+
+        'employees' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
+        ],
+
+        'clientes' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\UsuarioCliente::class,
+        ],
+
 
         // 'users' => [
         //     'driver' => 'database',

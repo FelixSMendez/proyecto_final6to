@@ -2,55 +2,95 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Carrito;
-use App\Models\Cliente;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 
 class CarritoController extends Controller
 {
+    /**
+     * Ver carrito
+     */
     public function index()
     {
-        $carritos = Carrito::all();
-        return view('carritos.index', compact('carritos'));
+        $carrito = session()->get('carrito', []);
+        $total = $this->calcularTotal($carrito);
+
+        return view('carrito.index', compact('carrito', 'total'));
     }
 
-    public function create()
+    /**
+     * Agregar producto al carrito
+     */
+    public function agregar(Request $request, $id)
     {
-        $clientes = Cliente::all();
-        return view('carritos.create', compact('clientes'));
+        $producto = Producto::findOrFail($id);
+        $cantidad = $request->input('cantidad', 1);
+
+        $carrito = session()->get('carrito', []);
+
+        if (isset($carrito[$id])) {
+            $carrito[$id]['cantidad'] += $cantidad;
+        } else {
+            $carrito[$id] = [
+                'id' => $producto->id,
+                'nombre' => $producto->nombre,
+                'precio' => $producto->precio,
+                'cantidad' => $cantidad,
+                'imagen' => $producto->imagen ?? 'placeholder.jpg',
+            ];
+        }
+
+        session()->put('carrito', $carrito);
+
+        return redirect()->back()->with('success', 'Producto agregado al carrito');
     }
 
-    public function store(Request $request)
+    /**
+     * Actualizar cantidad en carrito
+     */
+    public function actualizar(Request $request, $id)
     {
-        $request->validate([
-            'id_cliente' => 'nullable|exists:cliente,id',
-            'fecha_creacion' => 'nullable|date',
-        ]);
+        $carrito = session()->get('carrito', []);
+        $cantidad = $request->input('cantidad', 1);
 
-        Carrito::create($request->all());
-        return redirect()->route('carritos.index')->with('success', 'Carrito creado correctamente.');
+        if (isset($carrito[$id])) {
+            if ($cantidad <= 0) {
+                unset($carrito[$id]);
+            } else {
+                $carrito[$id]['cantidad'] = $cantidad;
+            }
+        }
+
+        session()->put('carrito', $carrito);
+
+        return redirect()->back()->with('success', 'Carrito actualizado');
     }
 
-    public function edit(Carrito $carrito)
+    /**
+     * Quitar producto del carrito
+     */
+    public function quitar($id)
     {
-        $clientes = Cliente::all();
-        return view('carritos.edit', compact('carrito', 'clientes'));
+        $carrito = session()->get('carrito', []);
+
+        if (isset($carrito[$id])) {
+            unset($carrito[$id]);
+        }
+
+        session()->put('carrito', $carrito);
+
+        return redirect()->back()->with('success', 'Producto eliminado del carrito');
     }
 
-    public function update(Request $request, Carrito $carrito)
+    /**
+     * Calcular total
+     */
+    private function calcularTotal($carrito)
     {
-        $request->validate([
-            'id_cliente' => 'nullable|exists:cliente,id',
-            'fecha_creacion' => 'nullable|date',
-        ]);
-
-        $carrito->update($request->all());
-        return redirect()->route('carritos.index')->with('success', 'Carrito actualizado correctamente.');
-    }
-
-    public function destroy(Carrito $carrito)
-    {
-        $carrito->delete();
-        return redirect()->route('carritos.index')->with('success', 'Carrito eliminado correctamente.');
+        $total = 0;
+        foreach ($carrito as $item) {
+            $total += $item['precio'] * $item['cantidad'];
+        }
+        return $total;
     }
 }

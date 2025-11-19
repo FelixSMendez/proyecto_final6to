@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('tipomedida', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo', 50)->nullable();
+            $table->string('tipo', 50);
             $table->string('descripcion', 200)->nullable();
             $table->timestamps();
         });
