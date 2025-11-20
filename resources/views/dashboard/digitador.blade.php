@@ -128,15 +128,15 @@
 
         <!-- Ingreso de Lotes -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
-                <div class="card-body text-center">
-                    <i class="fas fa-dolly fa-3x text-success mb-3"></i>
-                    <h6 class="card-title">Ingreso de Lotes</h6>
-                    <p class="card-text small text-muted">Registrar ingresos de inventario con proveedor</p>
-                    <small class="text-success font-weight-bold">✓ Acceso: ABM Completo</small>
-                </div>
-            </a>
+    <a href="{{ route('almacen.lotes.create') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+        <div class="card-body text-center">
+            <i class="fas fa-dolly fa-3x text-success mb-3"></i>
+            <h6 class="card-title">Ingreso de Lotes</h6>
+            <p class="card-text small text-muted">Registrar ingresos de inventario con proveedor</p>
+            <small class="text-success font-weight-bold">✓ Acceso: ABM Completo</small>
         </div>
+    </a>
+</div>
 
         <!-- Clientes -->
         <div class="col-md-4 mb-3">

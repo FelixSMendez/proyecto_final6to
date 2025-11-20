@@ -7,6 +7,8 @@ use App\Models\DetalleFactura;
 use App\Models\Pago;
 use App\Models\TipoPago;
 use App\Models\UsuarioCliente;
+use App\Models\Inventario;
+use App\Models\Lote;
 use Illuminate\Http\Request;
 
 class FacturaController extends Controller
@@ -15,51 +17,55 @@ class FacturaController extends Controller
      * Crear factura DESDE WEB (Cliente)
      * NO requiere empleado, se genera automáticamente
      */
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+    $request->validate([
+        'id_cliente' => 'required|exists:usuariosclientes,id',
+    ]);
 
-        $request->validate([
-            'id_cliente' => 'required|exists:usuariosclientes,id',
-        ]);
-
-        $carrito = session()->get('carrito', []);
-        
-        if (empty($carrito)) {
-            return back()->with('error', 'Carrito vacío');
-        }
-
-        // Calcular total
-        $total = 0;
-        foreach ($carrito as $item) {
-            $total += $item['precio'] * $item['cantidad'];
-        }
-
-        // Crear factura SIN empleado (es una venta web)
-        $factura = Factura::create([
-            'correlativo' => $this->generarCorrelativo(),
-            'letra_serie' => 'A',
-            'fecha' => now(),
-            'id_cliente' => $request->id_cliente,
-            'id_empleado' => auth('cliente')->id() ? null : auth('employee')->id(), // ✅ Sin empleado (venta web)
-            'id_sucursal' => 1,
-            'total' => $total,
-        ]);
-
-        // Guardar detalles de factura (items del carrito)
-        foreach ($carrito as $id => $item) {
-            DetalleFactura::create([
-                'id_factura' => $factura->id,
-                'id_detalleproducto' => (int) $item['id_detalle'],
-                'cantidad' => (int) $item['cantidad'],
-                'precio_unitario' => (float) $item['precio'],
-                'descuento_aplicado' => 0,
-                'subtotal' => (float) $item['precio'] * (int) $item['cantidad'],
-            ]);
-}
-
-        // Ir a vista de pago
-        return redirect()->route('factura.showPago', $factura->id);
+    $carrito = session()->get('carrito', []);
+    
+    if (empty($carrito)) {
+        return back()->with('error', 'Carrito vacío');
     }
+
+    // Calcular total
+    $total = 0;
+    foreach ($carrito as $item) {
+        $total += $item['precio'] * $item['cantidad'];
+    }
+
+    // Crear factura SIN empleado (venta web)
+    $factura = Factura::create([
+        'correlativo'   => $this->generarCorrelativo(),
+        'letra_serie'   => 'A',
+        'fecha'         => now(),
+        'id_cliente'    => $request->id_cliente,
+        'id_empleado'   => auth('employee')->check() ? auth('employee')->id() : null,
+        'id_sucursal'   => 1,
+        'total'         => $total,
+    ]);
+
+    // Guardar detalles de factura (items del carrito)
+    foreach ($carrito as $id => $item) {
+        DetalleFactura::create([
+            'id_factura'        => $factura->id,
+            'id_detalleproducto'=> (int) $item['id_detalle'],
+            'cantidad'          => (int) $item['cantidad'],
+            'precio_unitario'   => (float) $item['precio'],
+            'descuento_aplicado'=> 0,
+            'subtotal'          => (float) $item['precio'] * (int) $item['cantidad'],
+        ]);
+
+        // ✅ Descontar stock de la sucursal seleccionada en el carrito
+        $this->descontarStock(
+            (int) $item['id_detalle'],
+            (int) $item['cantidad'],
+            (int) ($item['id_sucursal'] ?? 1)
+        );
+    }
+    return redirect()->route('factura.showPago', $factura->id);
+}
 
     /**
      * Crear factura DESDE TIENDA (Empleado)
@@ -85,6 +91,7 @@ class FacturaController extends Controller
 
         $total = 0;
         $detalles = [];
+        $sucursal_id = auth('employee')->user()->empleado->id_sucursal ?? 1;
 
         // Calcular total y obtener detalles
         foreach ($request->productos as $producto) {
@@ -102,28 +109,98 @@ class FacturaController extends Controller
 
         // Crear factura CON empleado (venta tienda)
         $factura = Factura::create([
-            'correlativo' => $this->generarCorrelativo(),
-            'letra_serie' => 'A',
-            'fecha' => now(),
-            'id_cliente' => $request->id_cliente,
-            'id_empleado' => auth('employee')->id(), // ✅ Con empleado
-            'id_sucursal' => 1,
-            'total' => $total,
+    'correlativo' => $this->generarCorrelativo(),
+    'letra_serie' => 'A',
+    'fecha' => now(),
+    'id_cliente' => $request->id_cliente,
+    'id_empleado' => auth('employee')->id(),  // ✅ Aquí siempre hay empleado
+    'id_sucursal' => $sucursal_id,
+    'total' => $total,
+]);
+
+        // Guardar detalles y descontar stock
+        foreach ($detalles as $item) {
+        DetalleFactura::create([
+            'id_factura' => $factura->id,
+            'id_detalleproducto' => $item['id_detalle'],
+            'cantidad' => $item['cantidad'],
+            'precio_unitario' => $item['precio'],
+            'descuento_aplicado' => 0,
         ]);
 
-        // Guardar detalles
-        foreach ($detalles as $item) {
-            DetalleFactura::create([
-                'id_factura' => $factura->id,
-                'id_detalleproducto' => $item['id_detalle'],
-                'cantidad' => $item['cantidad'],
-                'precio_unitario' => $item['precio'],
-                'descuento_aplicado' => 0,
-            ]);
+        // ✅ DESCONTAR DE LA SUCURSAL DEL EMPLEADO
+        $this->descontarStock($item['id_detalle'], $item['cantidad'], $sucursal_id);
+    }
+
+    return redirect()->route('factura.showPago', $factura->id);
+
+}
+
+    /**
+     * ✅ DESCONTAR STOCK AUTOMÁTICAMENTE
+     */
+    private function descontarStock($id_detalleproducto, $cantidad, $id_sucursal = null)
+{
+    try {
+        // ✅ SI NO VIENE SUCURSAL, DETECTARLA AUTOMÁTICAMENTE
+        if (!$id_sucursal) {
+            // Si es empleado en tienda, usar su sucursal
+            if (auth('employee')->check()) {
+                $empleado = auth('employee')->user()->empleado;
+                $id_sucursal = $empleado->id_sucursal ?? 1;
+            } else {
+                // Si es cliente web, usar sucursal principal (1)
+                $id_sucursal = 1;
+            }
         }
 
-        return redirect()->route('factura.showPago', $factura->id);
+        // Obtener inventario DE LA SUCURSAL ESPECÍFICA
+        $inventario = Inventario::where('id_detalleproducto', $id_detalleproducto)
+                                ->where('id_sucursal', $id_sucursal)
+                                ->first();
+
+        if (!$inventario) {
+            \Log::warning("Inventario no encontrado para producto: {$id_detalleproducto}, sucursal: {$id_sucursal}");
+            return;
+        }
+
+        // Verificar si hay suficiente stock
+        if ($inventario->stock_actual < $cantidad) {
+            \Log::warning("Stock insuficiente en sucursal {$id_sucursal}. Disponible: {$inventario->stock_actual}, Solicitado: {$cantidad}");
+            return;
+        }
+
+        // ✅ Descontar del inventario ESPECÍFICO DE LA SUCURSAL
+        $inventario->decrement('stock_actual', $cantidad);
+        $inventario->decrement('existencia', $cantidad);
+
+        // ✅ Descontar del lote más antiguo (FIFO) DE ESTA SUCURSAL
+        $lotes = Lote::where('id_detalleproducto', $id_detalleproducto)
+                     ->where('id_sucursal', $id_sucursal)  // ← SOLO DE ESTA SUCURSAL
+                     ->where('cantidad_actual', '>', 0)
+                     ->orderBy('fechaEntrada', 'asc')
+                     ->get();
+
+        $cantidadPorDescontar = $cantidad;
+
+        foreach ($lotes as $lote) {
+            if ($cantidadPorDescontar <= 0) break;
+
+            if ($lote->cantidad_actual >= $cantidadPorDescontar) {
+                $lote->decrement('cantidad_actual', $cantidadPorDescontar);
+                $cantidadPorDescontar = 0;
+            } else {
+                $cantidadPorDescontar -= $lote->cantidad_actual;
+                $lote->update(['cantidad_actual' => 0]);
+            }
+        }
+
+        \Log::info("Stock descontado correctamente. Producto: {$id_detalleproducto}, Cantidad: {$cantidad}, Sucursal: {$id_sucursal}");
+
+    } catch (\Exception $e) {
+        \Log::error("Error al descontar stock: " . $e->getMessage());
     }
+}
 
     /**
      * Mostrar vista de pago
@@ -141,34 +218,10 @@ class FacturaController extends Controller
     }
 
     public function show($id)
-{
-    $factura = Factura::with(['cliente', 'detalles.detalleProducto.producto', 'empleadoAnulacion'])->findOrFail($id);
-    return view('factura.show', compact('factura'));
-}
-
-// ✅ ANULAR FACTURA (Solo Gerente)
-public function anular(Request $request, $id)
-{
-    $request->validate([
-        'razon_anulacion' => 'required|string|max:500'
-    ]);
-
-    $factura = Factura::findOrFail($id);
-
-    if ($factura->estado === 'anulada') {
-        return redirect()->back()->with('error', 'Esta factura ya está anulada');
+    {
+        $factura = Factura::with(['cliente', 'detalles.detalleProducto.producto', 'empleadoAnulacion'])->findOrFail($id);
+        return view('factura.show', compact('factura'));
     }
-
-    $factura->update([
-        'estado' => 'anulada',
-        'razon_anulacion' => $request->razon_anulacion,
-        'fecha_anulacion' => now(),
-        'id_empleado_anulacion' => auth('employee')->id()
-    ]);
-
-    return redirect()->back()->with('success', 'Factura anulada exitosamente');
-}
-
 
     /**
      * Guardar pago (cliente o empleado)
@@ -196,7 +249,7 @@ public function anular(Request $request, $id)
             }
         }
 
-        // ✅ GUARDAR PAGO CON TODOS LOS CAMPOS DE LA TABLA
+        // ✅ GUARDAR PAGO
         Pago::create([
             'id_factura' => $id,
             'monto' => (float) $request->monto,
@@ -221,7 +274,6 @@ public function anular(Request $request, $id)
         return redirect()->route('factura.showPago', $id)
             ->with('info', "Falta pagar: Q" . number_format($faltaPagar, 2));
     }
-    
 
     /**
      * Confirmación final

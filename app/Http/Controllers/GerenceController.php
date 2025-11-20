@@ -187,31 +187,33 @@ class GerenceController extends Controller
     }
 
     // ✅ REPORTE 5: Inventario por tienda
-    public function reporteInventarioTienda($id = null)
+    public function reporteInventarioTienda(Request $request)
     {
-        $sucursales = Sucursal::all();
-        $data = [];
-        $tiendaSeleccionada = null;
+         $sucursal_id = $request->get('id_sucursal');
+    
+    $query = Inventario::with(['detalleProducto.producto', 'sucursal'])
+                       ->where('stock_actual', '>', 0);
 
-        if ($id) {
-            $tiendaSeleccionada = Sucursal::find($id);
-            
-            if ($tiendaSeleccionada) {
-                $data = Inventario::where('id_sucursal', $id)
-                    ->with('detalleProducto.producto')
-                    ->get()
-                    ->map(function($item) {
-                        return [
-                            'producto' => $item->detalleProducto?->producto?->nombre ?? 'Sin nombre',
-                            'stock_actual' => $item->stock_actual,
-                            'unidad' => $item->detalleProducto?->producto?->unidad ?? 'N/A',
-                        ];
-                    })
-                    ->toArray();
-            }
-        }
+    if ($sucursal_id) {
+        $query->where('id_sucursal', $sucursal_id);
+    }
 
-        return view('gerente.reportes.reporte-inventario-tienda', ['sucursales' => $sucursales, 'data' => $data, 'tiendaSeleccionada' => $tiendaSeleccionada]);
+    $inventarios = $query->get();
+    $sucursales = Sucursal::all();
+
+    $data = $inventarios->map(function($inv) {
+        return [
+            'producto' => $inv->detalleProducto->producto->nombre,
+            'sucursal' => $inv->sucursal->nombre,
+            'existencia' => $inv->stock_actual,
+            'stock_minimo' => $inv->stock_minimo,
+            'stock_maximo' => $inv->stock_maximo,
+            'estado' => $inv->stock_actual < $inv->stock_minimo ? 'Bajo' : 'Normal'
+        ];
+    });
+
+    return view('gerente.reportes.reporte-inventario-tienda', 
+               compact('data', 'sucursales', 'sucursal_id'));
     }
 
     // ✅ REPORTE 6: Productos menos vendidos
@@ -328,32 +330,29 @@ class GerenceController extends Controller
     // ✅ REPORTE 10: Ingresos al inventario (reabastecimiento por lotes)
     public function reporteIngresosInv(Request $request)
     {
-        $request->validate([
-            'fecha_inicio' => 'nullable|date',
-            'fecha_fin' => 'nullable|date',
-        ]);
+        $fecha_inicio = $request->get('fecha_inicio', now()->format('Y-m-01'));
+    $fecha_fin = $request->get('fecha_fin', now()->format('Y-m-d'));
 
-        $fechaInicio = $request->query('fecha_inicio', now()->format('Y-m-d'));
-        $fechaFin = $request->query('fecha_fin', now()->format('Y-m-d'));
+    $lotes = Lote::with(['detalleProducto.producto', 'sucursal', 'proveedor'])
+                 ->whereBetween('fechaEntrada', [$fecha_inicio, $fecha_fin])
+                 ->get();
 
-        $data = Lote::whereBetween('fechaEntrada', [$fechaInicio, $fechaFin])
-            ->with('detalleProducto.producto', 'proveedor', 'sucursal')
-            ->get()
-            ->map(function($item) {
-                return [
-                    'producto' => $item->detalleProducto?->producto?->nombre ?? 'Sin nombre',
-                    'cantidad' => $item->cantidad,
-                    'cantidad_actual' => $item->cantidad_actual,
-                    'proveedor' => $item->proveedor?->nombre ?? 'N/A',
-                    'sucursal' => $item->sucursal?->nombre ?? 'N/A',
-                    'fecha_entrada' => $item->fechaEntrada,
-                    'costo_unitario' => $item->costoUnidad,
-                    'total_costo' => $item->cantidad * $item->costoUnidad,
-                ];
-            })
-            ->toArray();
+    $data = $lotes->map(function($lote) {
+        return [
+            'producto' => $lote->detalleProducto->producto->nombre,
+            'cantidad' => $lote->cantidad,
+            'cantidad_actual' => $lote->cantidad_actual,
+            'proveedor' => $lote->proveedor->nombre,
+            'sucursal' => $lote->sucursal->nombre,
+            'fecha_entrada' => $lote->fechaEntrada->format('d/m/Y'),
+            'costo_unitario' => $lote->costoUnidad,
+            'total_costo' => $lote->cantidad * $lote->costoUnidad,
+            'codLote' => $lote->codLote
+        ];
+    });
 
-        return view('gerente.reportes.reporte-ingresos-inv', ['data' => $data]);
+    return view('gerente.reportes.reporte-ingresos-inv', 
+               compact('data', 'fecha_inicio', 'fecha_fin'));
     }
 
     // ========================================

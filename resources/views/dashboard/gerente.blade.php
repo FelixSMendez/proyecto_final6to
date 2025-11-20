@@ -116,15 +116,15 @@
 
         <!-- REPORTE 5: Inventario por Tienda -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition" data-bs-toggle="modal" data-bs-target="#modalSeleccionarTienda">
-                <div class="card-body text-center">
-                    <i class="fas fa-store fa-3x text-secondary mb-3"></i>
-                    <h6 class="card-title">Reporte 5: Inventario por Tienda</h6>
-                    <p class="card-text small text-muted">Stock desglosado por cada sucursal</p>
-                    <small class="font-weight-bold">Pradera | Miraflores | Otros</small>
-                </div>
-            </a>
+    <a href="{{ route('gerente.reporte-inventario-tienda') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+        <div class="card-body text-center">
+            <i class="fas fa-store fa-3x text-secondary mb-3"></i>
+            <h6 class="card-title">Reporte 8: Inventario por Tienda</h6>
+            <p class="card-text small text-muted">Stock desglosado por cada sucursal</p>
+            <small class="font-weight-bold">Pradera | Miraflores | Otros</small>
         </div>
+    </a>
+</div>
 
         <!-- REPORTE 6: Productos Menos Vendidos -->
         <div class="col-md-4 mb-3">

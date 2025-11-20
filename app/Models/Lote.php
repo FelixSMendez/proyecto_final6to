@@ -1,5 +1,5 @@
 <?php
-
+// app/Models/Lote.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Lote extends Model
 {
     protected $table = 'lote';
-    
     protected $fillable = [
         'id_detalleproducto',
         'id_sucursal',
@@ -19,7 +18,14 @@ class Lote extends Model
         'fechaCaducidad',
         'fechaEntrada',
         'codLote',
-        'descripcion',
+        'descripcion'
+    ];
+
+    protected $casts = [
+        'fechaCaducidad' => 'date',
+        'fechaEntrada' => 'date',
+        'costoUnidad' => 'float',
+        'precio_venta' => 'float'
     ];
 
     public function detalleProducto()

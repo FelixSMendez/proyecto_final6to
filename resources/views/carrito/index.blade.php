@@ -15,6 +15,7 @@
                                 <th>Producto</th>
                                 <th>Precio</th>
                                 <th>Cantidad</th>
+                                <th>Sucursal</th>
                                 <th>Subtotal</th>
                                 <th>Acción</th>
                             </tr>
@@ -23,6 +24,12 @@
                             @foreach($carrito as $id => $item)
                                 @php
                                     $subtotal = $item['precio'] * $item['cantidad'];
+
+                                    // Sucursales con stock para este detalle de producto
+                                    $sucursalesConStock = \App\Models\Inventario::where('id_detalleproducto', $id)
+                                        ->with('sucursal')
+                                        ->where('stock_actual', '>', 0)
+                                        ->get();
                                 @endphp
                                 <tr>
                                     <td>
@@ -41,6 +48,25 @@
                                                 <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" class="form-control">
                                                 <button type="submit" class="btn btn-outline-secondary">✓</button>
                                             </div>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        {{-- ✅ Selector de sucursal por producto --}}
+                                        <form action="{{ route('carrito.cambiar-sucursal', $id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <select name="id_sucursal"
+                                                    class="form-select form-select-sm"
+                                                    onchange="this.form.submit()"
+                                                    style="min-width: 160px;">
+                                                @forelse($sucursalesConStock as $inv)
+                                                    <option value="{{ $inv->id_sucursal }}"
+                                                        {{ ($item['id_sucursal'] ?? null) == $inv->id_sucursal ? 'selected' : '' }}>
+                                                        {{ $inv->sucursal->nombre }} ({{ $inv->stock_actual }} uds)
+                                                    </option>
+                                                @empty
+                                                    <option disabled selected>Sin stock</option>
+                                                @endforelse
+                                            </select>
                                         </form>
                                     </td>
                                     <td>
@@ -69,7 +95,6 @@
                         <i class="fas fa-file-invoice"></i> Generar Cotización
                     </button>
                 </form>
-    
             </div>
 
             <!-- RESUMEN DE COMPRA -->
@@ -84,7 +109,7 @@
                             foreach($carrito as $item) {
                                 $subtotal += $item['precio'] * $item['cantidad'];
                             }
-                            $envio = 0; // Puedes cambiar esto
+                            $envio = 0;
                             $total = $subtotal + $envio;
                         @endphp
                         
@@ -103,12 +128,10 @@
 
                         <form action="{{ route('factura.store') }}" method="POST" class="w-100">
                             @csrf
-    
+
                             @auth('cliente')
-                                {{-- Si el cliente está autenticado, envía su ID automáticamente --}}
                                 <input type="hidden" name="id_cliente" value="{{ auth('cliente')->id() }}">
                             @else
-                                {{-- Si no está autenticado, muestra un selector --}}
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Selecciona tu Usuario</label>
                                     <select name="id_cliente" class="form-select" required>
@@ -119,7 +142,6 @@
                                     </select>
                                 </div>
                             @endauth
-
 
                             <button type="submit" class="btn btn-success btn-lg w-100">
                                 <i class="fas fa-lock me-2"></i> Proceder al Pago

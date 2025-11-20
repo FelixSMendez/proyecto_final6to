@@ -23,35 +23,54 @@ class CarritoController extends Controller
      */
     public function agregar(Request $request, $id)
 {
-    $detalleProducto = DetalleProducto::with(['producto', 'marca', 'tipoMedida', 'precios'])->findOrFail($id);
-    $cantidad = $request->input('cantidad', 1);
+    $detalle = \App\Models\DetalleProducto::with('producto')->findOrFail($id);
 
-    // Obtener precio correctamente
-    $precio = $detalleProducto->precios()
-        ->where('tipo_cliente', 'minorista')
-        ->first()?->precioVenta ?? 0;
+    $carrito = session()->get('carrito', []);
+
+    // Buscar sucursal con stock (por defecto la primera)
+    $inventario = \App\Models\Inventario::where('id_detalleproducto', $id)
+        ->with('sucursal')
+        ->where('stock_actual', '>', 0)
+        ->first();
+
+    if (!$inventario) {
+        return back()->with('error', 'No hay stock disponible para este producto en ninguna sucursal.');
+    }
+
+    if (!isset($carrito[$id])) {
+        $carrito[$id] = [
+            'id_detalle' => $id,
+            'nombre' => $detalle->producto->nombre,
+            'marca' => $detalle->producto->marca->nombre ?? '',
+            'medida' => $detalle->medida->nombre ?? '',
+            'color' => $detalle->color ?? '',
+            'precio' => $detalle->obtenerPrecio('minorista'),
+            'cantidad' => 0,
+            'id_sucursal' => $inventario->id_sucursal, // ✅ sucursal por defecto
+        ];
+    }
+
+    $carrito[$id]['cantidad'] += 1;
+
+    session()->put('carrito', $carrito);
+
+    return back()->with('success', 'Producto agregado al carrito');
+}
+
+public function cambiarSucursal(Request $request, $id)
+{
+    $request->validate([
+        'id_sucursal' => 'required|exists:sucursal,id',
+    ]);
 
     $carrito = session()->get('carrito', []);
 
     if (isset($carrito[$id])) {
-        $carrito[$id]['cantidad'] += $cantidad;
-    } else {
-        $carrito[$id] = [
-            'id_detalle' => $detalleProducto->id,
-            'id_producto' => $detalleProducto->id_producto,
-            'nombre' => $detalleProducto->producto->nombre,
-            'descripcion' => $detalleProducto->descripcion,
-            'marca' => $detalleProducto->marca->nombre ?? 'N/A',
-            'medida' => $detalleProducto->tipoMedida->nombre ?? 'N/A',
-            'color' => $detalleProducto->color_acabado,
-            'precio' => $precio,  // ✅ AQUÍ VA EL PRECIO
-            'cantidad' => $cantidad,
-        ];
+        $carrito[$id]['id_sucursal'] = (int)$request->id_sucursal;
+        session()->put('carrito', $carrito);
     }
 
-    session()->put('carrito', $carrito);
-
-    return redirect()->back()->with('success', 'Producto agregado al carrito');
+    return back();
 }
 
     /**

@@ -25,6 +25,8 @@ Route::get('/carrito', [App\Http\Controllers\CarritoController::class, 'index'])
 Route::post('/carrito/agregar/{id}', [App\Http\Controllers\CarritoController::class, 'agregar'])->name('carrito.agregar');
 Route::post('/carrito/actualizar/{id}', [App\Http\Controllers\CarritoController::class, 'actualizar'])->name('carrito.actualizar');
 Route::post('/carrito/quitar/{id}', [App\Http\Controllers\CarritoController::class, 'quitar'])->name('carrito.quitar');
+Route::post('/carrito/cambiar-sucursal/{id}', [App\Http\Controllers\CarritoController::class, 'cambiarSucursal'])
+    ->name('carrito.cambiar-sucursal');
 
 Route::get('/factura/{id}/pago', [FacturaController::class, 'showPago'])->name('factura.showPago');
 Route::post('/factura/{id}/pago', [FacturaController::class, 'procesarPago'])->name('factura.procesarPago');
@@ -55,6 +57,18 @@ Route::get('/pdf/factura/{id}/descargar', [App\Http\Controllers\PdfController::c
 Route::get('/pdf/factura/{id}/preview', [App\Http\Controllers\PdfController::class, 'previewFactura'])->name('pdf.factura.preview');
 Route::get('/pdf/cotizacion/{id}/descargar', [App\Http\Controllers\PdfController::class, 'descargarCotizacion'])->name('pdf.cotizacion.descargar');
 Route::get('/pdf/cotizacion/{id}/preview', [App\Http\Controllers\PdfController::class, 'previewCotizacion'])->name('pdf.cotizacion.preview');
+
+// ====================================
+// RUTAS PARA DIGITADOR - INGRESO DE LOTES
+// ====================================
+Route::middleware(['auth:employee'])->prefix('almacen')->group(function () {
+    Route::get('/lotes', [LoteController::class, 'index'])->name('almacen.lotes.index');
+    Route::get('/lotes/crear', [LoteController::class, 'create'])->name('almacen.lotes.create');
+    Route::post('/lotes', [LoteController::class, 'store'])->name('almacen.lotes.store');
+    Route::get('/lotes/{id}', [LoteController::class, 'show'])->name('almacen.lotes.show');
+});
+
+
 
 // ====================================
 // RUTAS PARA EMPLEADOS (usuariosistema)
