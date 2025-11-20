@@ -73,6 +73,30 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// ✅ RUTAS DE REPORTES - Solo para Gerente
+Route::middleware(['auth:employee', 'role:gerente'])->group(function () {
+    Route::get('/reportes/total-pago', [App\Http\Controllers\ReportController::class, 'totalPorMedioPago'])->name('reporte.total_pago');
+    Route::get('/reportes/productos-ingresos', [App\Http\Controllers\ReportController::class, 'productosPorIngresos'])->name('reporte.productos_ingresos');
+    Route::get('/reportes/productos-cantidad', [App\Http\Controllers\ReportController::class, 'productosPorCantidad'])->name('reporte.productos_cantidad');
+    Route::get('/reportes/inventario-actual', [App\Http\Controllers\ReportController::class, 'inventarioActual'])->name('reporte.inventario_actual');
+    Route::get('/reportes/productos-menos-vendidos', [App\Http\Controllers\ReportController::class, 'productosMenosVendidos'])->name('reporte.menos_vendidos');
+    Route::get('/reportes/productos-sin-stock', [App\Http\Controllers\ReportController::class, 'productosSinStock'])->name('reporte.sin_stock');
+    Route::get('/reportes/buscar-factura/{numero}', [App\Http\Controllers\ReportController::class, 'buscarFactura'])->name('reporte.buscar_factura');
+    Route::get('/reportes/ingresos-inventario', [App\Http\Controllers\ReportController::class, 'ingresosInventario'])->name('reporte.ingresos');
+    Route::get('/reportes/bajo-stock', [App\Http\Controllers\ReportController::class, 'productosBaroStock'])->name('reporte.bajo_stock');
+    Route::get('/reportes/inventario-tienda/{tienda}', [App\Http\Controllers\ReportController::class, 'inventarioPorTienda'])->name('reporte.por_tienda');
+});
+
+// ✅ RUTAS COTIZACIONES
+Route::middleware('auth:cliente')->group(function () {
+    Route::get('/cotizaciones', [App\Http\Controllers\CotizacionController::class, 'index'])->name('cotizacion.index');
+    Route::post('/cotizaciones/crear', [App\Http\Controllers\CotizacionController::class, 'crear'])->name('cotizacion.crear');
+    Route::get('/cotizaciones/{id}', [App\Http\Controllers\CotizacionController::class, 'show'])->name('cotizacion.show');
+    Route::post('/cotizaciones/{id}/estado', [App\Http\Controllers\CotizacionController::class, 'cambiarEstado'])->name('cotizacion.estado');
+    Route::get('/cotizaciones/{id}/pdf', [App\Http\Controllers\CotizacionController::class, 'descargarPDF'])->name('cotizacion.pdf');
+    Route::delete('/cotizaciones/{id}', [App\Http\Controllers\CotizacionController::class, 'destroy'])->name('cotizacion.destroy');
+});
+
 // ====================================
 // AUTH ROUTES (Breeze) - Login/Logout Empleados
 // ====================================

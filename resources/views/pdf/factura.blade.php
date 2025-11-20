@@ -180,7 +180,6 @@
                 @if($logoBase64)
                 <img src="{{ $logoBase64 }}" alt="PAINTS Logo" style="width: 80px; height: auto; margin-bottom: 10px;">
                 @endif
-                <h1>PAINTS</h1>
                 <p><strong>Cadena de Pinturas</strong></p>
                 <p>Solventes • Accesorios • Pinturas para Paredes</p>
                 <p>NIT: 1234567-8</p>

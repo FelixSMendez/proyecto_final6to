@@ -13,9 +13,10 @@ class DetalleCotizacion extends Model
 
     protected $fillable = [
         'id_cotizacion',
-        'id_producto',
+        'id_detalleproducto',
         'cantidad',
         'precio_unitario',
+        'subtotal'
     ];
 
     public function cotizacion()
@@ -23,8 +24,8 @@ class DetalleCotizacion extends Model
         return $this->belongsTo(Cotizacion::class, 'id_cotizacion');
     }
 
-    public function producto()
+    public function detalleProducto()
     {
-        return $this->belongsTo(Producto::class, 'id_producto');
+        return $this->belongsTo(DetalleProducto::class, 'id_detalleproducto');
     }
 }

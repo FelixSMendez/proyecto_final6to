@@ -63,6 +63,13 @@
                 <a href="{{ route('catalogo.index') }}" class="btn btn-outline-primary">
                     <i class="fas fa-arrow-left me-2"></i> Seguir Comprando
                 </a>
+                <form method="POST" action="{{ route('cotizacion.crear') }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-file-invoice"></i> Generar Cotización
+                    </button>
+                </form>
+    
             </div>
 
             <!-- RESUMEN DE COMPRA -->
@@ -112,6 +119,7 @@
                                     </select>
                                 </div>
                             @endauth
+
 
                             <button type="submit" class="btn btn-success btn-lg w-100">
                                 <i class="fas fa-lock me-2"></i> Proceder al Pago
