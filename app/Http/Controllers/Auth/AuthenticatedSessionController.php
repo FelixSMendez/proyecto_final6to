@@ -50,7 +50,7 @@ class AuthenticatedSessionController extends Controller
                 case 'cajero':
                     return redirect()->route('dashboard.cajero');
                 case 'gerente':
-                    return redirect()->route('dashboard.gerente');
+                    return redirect()->route('gerente.dashboard');
                 default:
                     return redirect()->route('dashboard');
             }

@@ -22,8 +22,8 @@
             <div class="card border-left-primary shadow-sm h-100">
                 <div class="card-body">
                     <div class="text-primary font-weight-bold text-uppercase small">Total Ventas</div>
-                    <div class="h3 mb-0">Q 0.00</div>
-                    <p class="small text-muted mt-2">Este mes</p>
+                    <div class="h3 mb-0">Q {{ number_format($totalFacturado ?? 0, 2) }}</div>
+                    <p class="small text-muted mt-2">Hoy</p>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
     <div class="row">
         <!-- REPORTE 1: Facturación Total -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.reporte-monto') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
                     <h6 class="card-title">Reporte 1: Facturación Total</h6>
@@ -80,7 +80,7 @@
 
         <!-- REPORTE 2: Productos Más Dinero -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.reporte-ingresos') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-money-bill-wave fa-3x text-success mb-3"></i>
                     <h6 class="card-title">Reporte 2: Productos Más Dinero</h6>
@@ -92,7 +92,7 @@
 
         <!-- REPORTE 3: Productos Más Vendidos -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.reporte-vendidos') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-shopping-cart fa-3x text-info mb-3"></i>
                     <h6 class="card-title">Reporte 3: Productos Más Vendidos</h6>
@@ -104,7 +104,7 @@
 
         <!-- REPORTE 4: Inventario General -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.reporte-inventario') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-warehouse fa-3x text-warning mb-3"></i>
                     <h6 class="card-title">Reporte 4: Inventario General</h6>
@@ -116,7 +116,7 @@
 
         <!-- REPORTE 5: Inventario por Tienda -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition" data-bs-toggle="modal" data-bs-target="#modalSeleccionarTienda">
                 <div class="card-body text-center">
                     <i class="fas fa-store fa-3x text-secondary mb-3"></i>
                     <h6 class="card-title">Reporte 5: Inventario por Tienda</h6>
@@ -128,7 +128,7 @@
 
         <!-- REPORTE 6: Productos Menos Vendidos -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.reporte-menos-vendidos') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-arrow-down fa-3x text-danger mb-3"></i>
                     <h6 class="card-title">Reporte 6: Menos Vendidos</h6>
@@ -140,7 +140,7 @@
 
         <!-- REPORTE 7: Productos Sin Stock -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.reporte-sin-stock') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
                     <h6 class="card-title">Reporte 7: Sin Stock</h6>
@@ -152,7 +152,7 @@
 
         <!-- REPORTE 8: Productos Bajo Mínimo -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.reporte-stock-minimo') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-bell fa-3x text-warning mb-3"></i>
                     <h6 class="card-title">Reporte 8: Bajo Mínimo</h6>
@@ -164,7 +164,7 @@
 
         <!-- REPORTE 9: Detalle de Factura -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition" data-bs-toggle="modal" data-bs-target="#modalBuscarFactura">
                 <div class="card-body text-center">
                     <i class="fas fa-search fa-3x text-info mb-3"></i>
                     <h6 class="card-title">Reporte 9: Detalle Factura</h6>
@@ -176,7 +176,7 @@
 
         <!-- REPORTE 10: Ingresos de Inventario -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.reporte-ingresos-inv') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-clipboard-list fa-3x text-primary mb-3"></i>
                     <h6 class="card-title">Reporte 10: Ingresos Inventario</h6>
@@ -199,9 +199,9 @@
     <div class="row">
         <!-- Anular Factura -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('gerente.facturas-anular') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
-                    <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                    <i class="fas fa-ban fa-3x text-danger mb-3"></i>
                     <h6 class="card-title">Anular Factura</h6>
                     <p class="card-text small text-muted">Anular por número de factura: reverso de transacción</p>
                     <small class="text-danger font-weight-bold">✓ Acceso: Solo Gerente</small>
@@ -284,6 +284,48 @@
             <li>❌ NO puedes vender directamente (es función del Cajero)</li>
             <li>❌ NO puedes crear productos (es función del Digitador)</li>
         </ul>
+    </div>
+</div>
+
+<!-- MODAL: Buscar Factura -->
+<div class="modal fade" id="modalBuscarFactura" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Buscar Factura</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="GET" action="{{ route('gerente.reporte-buscar-factura') }}">
+                <div class="modal-body">
+                    <input type="number" name="numero" class="form-control" placeholder="Número de factura" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Seleccionar Tienda -->
+<div class="modal fade" id="modalSeleccionarTienda" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Tienda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    @foreach(\App\Models\Sucursal::all() as $tienda)
+                    <a href="{{ route('gerente.reporte-inventario-tienda', $tienda->id) }}" class="list-group-item list-group-item-action">
+                        {{ $tienda->nombre }}
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

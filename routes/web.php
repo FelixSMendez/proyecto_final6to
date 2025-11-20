@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\ClienteLoginController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\GerenceController;
+use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\LoteController;
 
 Route::get('/', [App\Http\Controllers\ProductoController::class, 'index'])->name('home');
 
@@ -60,7 +63,7 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
     Route::get('/dashboard/digitador', fn() => view('dashboard.digitador'))->name('dashboard.digitador');
     Route::get('/dashboard/cajero', fn() => view('dashboard.cajero'))->name('dashboard.cajero');
-    Route::get('/dashboard/gerente', fn() => view('dashboard.gerente'))->name('dashboard.gerente');
+    //Route::middleware('es_gerente')->get('/dashboard/gerente', [GerenceController::class, 'dashboard'])->name('dashboard.gerente');
 
     // Solo cajeros
     Route::middleware('es_cajero')->group(function () {
@@ -73,19 +76,6 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ✅ RUTAS DE REPORTES - Solo para Gerente
-Route::middleware(['auth:employee', 'role:gerente'])->group(function () {
-    Route::get('/reportes/total-pago', [App\Http\Controllers\ReportController::class, 'totalPorMedioPago'])->name('reporte.total_pago');
-    Route::get('/reportes/productos-ingresos', [App\Http\Controllers\ReportController::class, 'productosPorIngresos'])->name('reporte.productos_ingresos');
-    Route::get('/reportes/productos-cantidad', [App\Http\Controllers\ReportController::class, 'productosPorCantidad'])->name('reporte.productos_cantidad');
-    Route::get('/reportes/inventario-actual', [App\Http\Controllers\ReportController::class, 'inventarioActual'])->name('reporte.inventario_actual');
-    Route::get('/reportes/productos-menos-vendidos', [App\Http\Controllers\ReportController::class, 'productosMenosVendidos'])->name('reporte.menos_vendidos');
-    Route::get('/reportes/productos-sin-stock', [App\Http\Controllers\ReportController::class, 'productosSinStock'])->name('reporte.sin_stock');
-    Route::get('/reportes/buscar-factura/{numero}', [App\Http\Controllers\ReportController::class, 'buscarFactura'])->name('reporte.buscar_factura');
-    Route::get('/reportes/ingresos-inventario', [App\Http\Controllers\ReportController::class, 'ingresosInventario'])->name('reporte.ingresos');
-    Route::get('/reportes/bajo-stock', [App\Http\Controllers\ReportController::class, 'productosBaroStock'])->name('reporte.bajo_stock');
-    Route::get('/reportes/inventario-tienda/{tienda}', [App\Http\Controllers\ReportController::class, 'inventarioPorTienda'])->name('reporte.por_tienda');
-});
 
 // ✅ RUTAS COTIZACIONES
 Route::middleware('auth:cliente')->group(function () {
@@ -96,6 +86,30 @@ Route::middleware('auth:cliente')->group(function () {
     Route::get('/cotizaciones/{id}/pdf', [App\Http\Controllers\CotizacionController::class, 'descargarPDF'])->name('cotizacion.pdf');
     Route::delete('/cotizaciones/{id}', [App\Http\Controllers\CotizacionController::class, 'destroy'])->name('cotizacion.destroy');
 });
+
+//Reportes para gerente
+Route::middleware(['auth:employee'])->prefix('gerente')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [GerenceController::class, 'dashboard'])->name('gerente.dashboard');
+    
+    // Reportes (retorna vistas)
+    Route::get('/reporte-monto', [GerenceController::class, 'reporteMonto'])->name('gerente.reporte-monto');
+    Route::get('/reporte-ingresos', [GerenceController::class, 'reporteIngresos'])->name('gerente.reporte-ingresos');
+    Route::get('/reporte-vendidos', [GerenceController::class, 'reporteVendidos'])->name('gerente.reporte-vendidos');
+    Route::get('/reporte-inventario', [GerenceController::class, 'reporteInventario'])->name('gerente.reporte-inventario');
+    Route::get('/reporte-menos-vendidos', [GerenceController::class, 'reporteMenosVendidos'])->name('gerente.reporte-menos-vendidos');
+    Route::get('/reporte-sin-stock', [GerenceController::class, 'reporteSinStock'])->name('gerente.reporte-sin-stock');
+    Route::get('/reporte-buscar-factura', [GerenceController::class, 'reporteBuscarFactura'])->name('gerente.reporte-buscar-factura');
+    Route::get('/reporte-ingresos-inv', [GerenceController::class, 'reporteIngresosInv'])->name('gerente.reporte-ingresos-inv');
+    Route::get('/reporte-stock-minimo', [GerenceController::class, 'reporteStockMinimo'])->name('gerente.reporte-stock-minimo');
+    Route::get('/reporte-inventario-tienda/{id?}', [GerenceController::class, 'reporteInventarioTienda'])->name('gerente.reporte-inventario-tienda');
+    
+    // Anulación de facturas
+    Route::get('/facturas-anular', [GerenceController::class, 'facturasAnular'])->name('gerente.facturas-anular');
+    Route::get('/factura/{id}/anular', [GerenceController::class, 'mostrarFacturaAnular'])->name('gerente.factura-anular-detalle');
+    Route::post('/factura/{id}/anular', [GerenceController::class, 'anularFactura'])->name('gerente.factura-anular-guardar');
+});
+
 
 // ====================================
 // AUTH ROUTES (Breeze) - Login/Logout Empleados

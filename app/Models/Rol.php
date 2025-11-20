@@ -13,5 +13,6 @@ class Rol extends Model
 
     protected $fillable = [
         'tipo',
+        'descripcion'
     ];
 }

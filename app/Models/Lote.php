@@ -2,33 +2,38 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Lote extends Model
 {
-    use HasFactory;
-
     protected $table = 'lote';
-
+    
     protected $fillable = [
+        'id_detalleproducto',
+        'id_sucursal',
+        'id_proveedor',
         'cantidad',
+        'cantidad_actual',
         'costoUnidad',
+        'precio_venta',
         'fechaCaducidad',
         'fechaEntrada',
         'codLote',
         'descripcion',
-        'id_producto',
-        'id_marca',
     ];
 
-    public function producto()
+    public function detalleProducto()
     {
-        return $this->belongsTo(Producto::class, 'id_producto');
+        return $this->belongsTo(DetalleProducto::class, 'id_detalleproducto');
     }
 
-    public function marca()
+    public function sucursal()
     {
-        return $this->belongsTo(Marca::class, 'id_marca');
+        return $this->belongsTo(Sucursal::class, 'id_sucursal');
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class, 'id_proveedor');
     }
 }

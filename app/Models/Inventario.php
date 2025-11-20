@@ -2,24 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Inventario extends Model
 {
-    use HasFactory;
-
     protected $table = 'inventario';
-
+    
     protected $fillable = [
         'existencia',
-        'id_lote',
+        'id_detalleproducto',
         'id_sucursal',
+        'stock_minimo',
+        'stock_maximo',
+        'stock_actual',
     ];
 
-    public function lote()
+    public function detalleProducto()
     {
-        return $this->belongsTo(Lote::class, 'id_lote');
+        return $this->belongsTo(DetalleProducto::class, 'id_detalleproducto');
     }
 
     public function sucursal()

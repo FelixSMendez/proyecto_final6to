@@ -20,13 +20,29 @@ class Factura extends Model
         'id_sucursal',
         'total',
         'estado',
+        'razon_anulacion',
+        'fecha_anulacion',
+        'id_empleado_anulacion'
     ];
 
     protected $casts = [
         'fecha' => 'datetime',
         'total' => 'float',
         'estado' => 'string',
+        // ❌ REMOVE 'fecha_anulacion' => 'dateTime'  ← Quita esta línea
     ];
+
+    // ✅ MUTADOR para manejar fecha_anulacion correctamente
+    public function setFechaAnulacionAttribute($value)
+    {
+        if ($value === null) {
+            $this->attributes['fecha_anulacion'] = null;
+        } elseif ($value instanceof \DateTime || $value instanceof \Illuminate\Support\Carbon) {
+            $this->attributes['fecha_anulacion'] = $value->format('Y-m-d H:i:s');
+        } else {
+            $this->attributes['fecha_anulacion'] = $value;
+        }
+    }
 
     public function cliente()
     {
@@ -41,6 +57,11 @@ class Factura extends Model
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class, 'id_sucursal');
+    }
+
+    public function empleadoAnulacion()
+    {
+        return $this->belongsTo(Empleado::class, 'id_empleado_anulacion');
     }
 
     public function detalles()

@@ -140,6 +140,36 @@ class FacturaController extends Controller
         return view('factura.pago', compact('factura', 'tiposPago', 'pagosRegistrados', 'faltaPagar'));
     }
 
+    public function show($id)
+{
+    $factura = Factura::with(['cliente', 'detalles.detalleProducto.producto', 'empleadoAnulacion'])->findOrFail($id);
+    return view('factura.show', compact('factura'));
+}
+
+// ✅ ANULAR FACTURA (Solo Gerente)
+public function anular(Request $request, $id)
+{
+    $request->validate([
+        'razon_anulacion' => 'required|string|max:500'
+    ]);
+
+    $factura = Factura::findOrFail($id);
+
+    if ($factura->estado === 'anulada') {
+        return redirect()->back()->with('error', 'Esta factura ya está anulada');
+    }
+
+    $factura->update([
+        'estado' => 'anulada',
+        'razon_anulacion' => $request->razon_anulacion,
+        'fecha_anulacion' => now(),
+        'id_empleado_anulacion' => auth('employee')->id()
+    ]);
+
+    return redirect()->back()->with('success', 'Factura anulada exitosamente');
+}
+
+
     /**
      * Guardar pago (cliente o empleado)
      */
