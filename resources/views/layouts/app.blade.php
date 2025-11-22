@@ -82,7 +82,7 @@
                             </li>
                         @endauth
 
-                        <!-- ✅ INICIAR SESIÓN - SOLO SI NO ESTÁ AUTENTICADO -->
+                        <!-- INICIAR SESIÓN - SOLO SI NO ESTÁ AUTENTICADO -->
                         @if(!isset($showLoginOptions) || $showLoginOptions)
                             @if(!auth('employee')->check() && !auth('cliente')->check())
                                 <li><a class="dropdown-item" href="{{ route('login') }}">

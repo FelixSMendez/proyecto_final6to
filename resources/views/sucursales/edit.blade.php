@@ -1,43 +1,54 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Editar Sucursal</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="p-4">
+@extends('layouts.app')
+
+@section('content')
 <div class="container">
-    <h1 class="mb-4">Editar Sucursal</h1>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Sucursal</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('sucursales.update', $sucursal->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
 
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-            </ul>
-        </div>
-    @endif
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre *</label>
+                            <input type="text" class="form-control @error('nombre') is-invalid @enderror" id="nombre" name="nombre" value="{{ old('nombre', $sucursal->nombre) }}" required maxlength="100">
+                            @error('nombre')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-    <form action="{{ route('sucursales.update', $sucursal) }}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre *</label>
-            <input type="text" name="nombre" id="nombre" class="form-control" value="{{ $sucursal->nombre }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="direccion" class="form-label">Dirección</label>
-            <input type="text" name="direccion" id="direccion" class="form-control" value="{{ $sucursal->direccion }}">
-        </div>
-        <div class="mb-3">
-            <label for="ciudad" class="form-label">Ciudad</label>
-            <input type="text" name="ciudad" id="ciudad" class="form-control" value="{{ $sucursal->ciudad }}">
-        </div>
+                        <div class="mb-3">
+                            <label for="dirección" class="form-label">Dirección *</label>
+                            <input type="text" class="form-control @error('dirección') is-invalid @enderror" id="dirección" name="dirección" value="{{ old('dirección', $sucursal->dirección) }}" required maxlength="150">
+                            @error('dirección')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-        <a href="{{ route('sucursales.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
+                        <div class="mb-3">
+                            <label for="ciudad" class="form-label">Ciudad *</label>
+                            <input type="text" class="form-control @error('ciudad') is-invalid @enderror" id="ciudad" name="ciudad" value="{{ old('ciudad', $sucursal->ciudad) }}" required maxlength="100">
+                            @error('ciudad')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Actualizar
+                            </button>
+                            <a href="{{ route('sucursales.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</body>
-</html>
+@endsection

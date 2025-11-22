@@ -1,51 +1,71 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Tipos de Medida</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="p-4">
-<div class="container">
-    <h1 class="mb-4">Tipos de Medida</h1>
+@extends('layouts.app')
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+@section('content')
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-ruler me-2"></i>Tipos de Medida</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ route('tipomedidas.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Nueva Medida
+            </a>
+        </div>
+    </div>
+
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>{{ $message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     @endif
 
-    <a href="{{ route('tipomedidas.create') }}" class="btn btn-primary mb-3">Nuevo Tipo</a>
-    <a href="/" class="btn btn-warning mb-3">Regresar</a>
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th style="width: 150px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($tipomedidas as $medida)
+                        <tr>
+                            <td><span class="badge bg-secondary">{{ $medida->id }}</span></td>
+                            <td><strong>{{ $medida->tipo }}</strong></td>
+                            <td>{{ Str::limit($medida->descripcion, 50) }}</td>
+                            <td>
+                                <a href="{{ route('tipomedidas.edit', $medida->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit me-1"></i>Editar
+                                </a>
+                                <form action="{{ route('tipomedidas.destroy', $medida->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
+                                        <i class="fas fa-trash me-1"></i>Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox me-2"></i>No hay tipos de medida registrados
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Descripción</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach ($tipomedidas as $tipomedida)
-            <tr>
-                <td>{{ $tipomedida->id }}</td>
-                <td>{{ $tipomedida->tipo }}</td>
-                <td>{{ $tipomedida->descripcion }}</td>
-                <td>
-                    <a href="{{ route('tipomedidas.edit', $tipomedida) }}" class="btn btn-warning btn-sm">Editar</a>
-                    <form action="{{ route('tipomedidas.destroy', $tipomedida) }}" method="POST" style="display:inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('¿Seguro que deseas eliminar este tipo de medida?')">
-                            Eliminar
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+    @if($tipomedidas->hasPages())
+        <div class="d-flex justify-content-center mt-4">
+            {{ $tipomedidas->links() }}
+        </div>
+    @endif
 </div>
-</body>
-</html>
+@endsection

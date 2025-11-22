@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Sucursal extends Model
 {
     protected $table = 'sucursal';
-    protected $fillable = ['nombre', 'direccion', 'ciudad'];
+    protected $fillable = 
+    [
+        'nombre', 
+        'direccion', 
+        'ciudad'
+    ];
 
     public function inventarios()
     {

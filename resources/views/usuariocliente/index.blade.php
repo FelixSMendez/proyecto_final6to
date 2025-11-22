@@ -4,11 +4,11 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h2><i class="fas fa-tag me-2"></i>Marcas</h2>
+            <h2><i class="fas fa-user-check me-2"></i>Usuarios de Cliente</h2>
         </div>
         <div class="col-md-4 text-end">
-            <a href="{{ route('marcas.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Nueva Marca
+            <a href="{{ route('usuariocliente.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Nuevo Usuario
             </a>
         </div>
     </div>
@@ -26,22 +26,24 @@
                 <thead class="table-dark">
                     <tr>
                         <th>ID</th>
-                        <th>Marca</th>
-                        <th>Descripción</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Cliente</th>
                         <th style="width: 150px;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($marcas as $marca)
+                    @forelse($usuariosc as $usuario)
                         <tr>
-                            <td><span class="badge bg-secondary">{{ $marca->id }}</span></td>
-                            <td><strong>{{ $marca->marca }}</strong></td>
-                            <td>{{ Str::limit($marca->descripcion, 50) }}</td>
+                            <td><span class="badge bg-secondary">{{ $usuario->id }}</span></td>
+                            <td><strong>{{ $usuario->usuario }}</strong></td>
+                            <td>{{ $usuario->correo_electronico }}</td>
+                            <td>{{ $usuario->cliente->nombre ?? 'Sin asignar' }}</td>
                             <td>
-                                <a href="{{ route('marcas.edit', $marca->id) }}" class="btn btn-sm btn-warning">
+                                <a href="{{ route('usuariocliente.edit', $usuario->id) }}" class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit me-1"></i>Editar
                                 </a>
-                                <form action="{{ route('marcas.destroy', $marca->id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('usuariocliente.destroy', $usuario->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
@@ -52,8 +54,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-4">
-                                <i class="fas fa-inbox me-2"></i>No hay marcas registradas
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox me-2"></i>No hay usuarios de cliente registrados
                             </td>
                         </tr>
                     @endforelse
@@ -62,11 +64,10 @@
         </div>
     </div>
 
-    @if($marcas->hasPages())
+    @if($usuariosc->hasPages())
         <div class="d-flex justify-content-center mt-4">
-            {{ $marcas->links() }}
+            {{ $usuariosc->links() }}
         </div>
     @endif
 </div>
 @endsection
-

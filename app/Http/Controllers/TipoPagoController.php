@@ -22,6 +22,7 @@ class TipoPagoController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:50',
+            'descripcion' => 'nullable|string|max:200',
         ]);
 
         TipoPago::create($request->all());
@@ -37,6 +38,7 @@ class TipoPagoController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:50',
+            'descripcion' => 'nullable|string|max:200',
         ]);
 
         $tipopago->update($request->all());

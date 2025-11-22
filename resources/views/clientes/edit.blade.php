@@ -1,52 +1,82 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Editar Cliente</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="p-4">
+@extends('layouts.app')
+
+@section('content')
 <div class="container">
-  <h1 class="mb-4">Editar Cliente</h1>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Cliente</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('clientes.update', $cliente->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
 
-  @if($errors->any())
-    <div class="alert alert-danger">
-      <ul>
-        @foreach($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre *</label>
+                            <input type="text" class="form-control @error('nombre') is-invalid @enderror" id="nombre" name="nombre" value="{{ old('nombre', $cliente->nombre) }}" required maxlength="100">
+                            @error('nombre')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-  <form action="{{ route('clientes.update', $cliente) }}" method="POST">
-    @csrf
-    @method('PUT')
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $cliente->email) }}" required maxlength="100">
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-    <div class="mb-3">
-      <label for="nombre" class="form-label">Nombre *</label>
-      <input type="text" name="nombre" id="nombre" class="form-control" value="{{ $cliente->nombre }}" required>
-    </div>
-    <div class="mb-3">
-      <label for="email" class="form-label">Email</label>
-      <input type="email" name="email" id="email" class="form-control" value="{{ $cliente->email }}">
-    </div>
-    <div class="mb-3">
-      <label for="direccion" class="form-label">Dirección</label>
-      <input type="text" name="direccion" id="direccion" class="form-control" value="{{ $cliente->direccion }}">
-    </div>
-    <div class="mb-3">
-      <label for="telefono" class="form-label">Teléfono</label>
-      <input type="text" name="telefono" id="telefono" class="form-control" value="{{ $cliente->telefono }}">
-    </div>
-    <div class="mb-3">
-      <label for="gps" class="form-label">GPS</label>
-      <input type="text" name="gps" id="gps" class="form-control" value="{{ $cliente->gps }}">
-    </div>
+                        <div class="mb-3">
+                            <label for="dirección" class="form-label">Dirección *</label>
+                            <input type="text" class="form-control @error('dirección') is-invalid @enderror" id="dirección" name="dirección" value="{{ old('dirección', $cliente->dirección) }}" required maxlength="150">
+                            @error('dirección')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-    <button type="submit" class="btn btn-primary">Actualizar</button>
-    <a href="{{ route('clientes.index') }}" class="btn btn-secondary">Cancelar</a>
-  </form>
+                        <div class="mb-3">
+                            <label for="teléfono" class="form-label">Teléfono *</label>
+                            <input type="tel" class="form-control @error('teléfono') is-invalid @enderror" id="teléfono" name="teléfono" value="{{ old('teléfono', $cliente->teléfono) }}" required maxlength="20">
+                            @error('teléfono')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="gps" class="form-label">GPS (Coordenadas)</label>
+                            <input type="text" class="form-control @error('gps') is-invalid @enderror" id="gps" name="gps" value="{{ old('gps', $cliente->gps) }}" placeholder="Ej: 14.6349, -90.5069" maxlength="100">
+                            @error('gps')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tipo" class="form-label">Tipo *</label>
+                            <select class="form-select @error('tipo') is-invalid @enderror" id="tipo" name="tipo" required>
+                                <option value="">-- Selecciona un tipo --</option>
+                                <option value="persona" {{ old('tipo', $cliente->tipo) == 'persona' ? 'selected' : '' }}>Persona Natural</option>
+                                <option value="empresa" {{ old('tipo', $cliente->tipo) == 'empresa' ? 'selected' : '' }}>Empresa</option>
+                            </select>
+                            @error('tipo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Actualizar
+                            </button>
+                            <a href="{{ route('clientes.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</body>
-</html>
+@endsection

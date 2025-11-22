@@ -21,7 +21,7 @@ class TipoProductoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:100',
+            'tipo' => 'required|string|max:100',
             'descripcion' => 'nullable|string|max:200',
         ]);
 
@@ -37,7 +37,7 @@ class TipoProductoController extends Controller
     public function update(Request $request, TipoProducto $tiposproducto)
     {
         $request->validate([
-            'nombre' => 'required|string|max:100',
+            'tipo' => 'required|string|max:100',
             'descripcion' => 'nullable|string|max:200',
         ]);
 

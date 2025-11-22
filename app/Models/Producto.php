@@ -10,7 +10,10 @@ class Producto extends Model
     use HasFactory;
 
     protected $table = 'producto';
-    protected $fillable = ['nombre', 'id_tipoProducto', 'descripcion'];
+    protected $fillable = 
+    ['nombre', 
+    'id_tipoProducto', 
+    'descripcion'];
 
     public function tipoProducto()
     {

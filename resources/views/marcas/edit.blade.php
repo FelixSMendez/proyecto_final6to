@@ -1,43 +1,46 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Editar Marca</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="p-4">
+@extends('layouts.app')
 
+@section('content')
 <div class="container">
-  <h1 class="mb-4">Editar Marca</h1>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Marca</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('marcas.update', $marca->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
 
-  @if($errors->any())
-    <div class="alert alert-danger">
-      <ul>
-        @foreach($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
+                        <div class="mb-3">
+                            <label for="marca" class="form-label">Marca *</label>
+                            <input type="text" class="form-control @error('marca') is-invalid @enderror" id="marca" name="marca" value="{{ old('marca', $marca->marca) }}" required maxlength="100">
+                            @error('marca')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control @error('descripcion') is-invalid @enderror" id="descripcion" name="descripcion" rows="3" maxlength="200">{{ old('descripcion', $marca->descripcion) }}</textarea>
+                            @error('descripcion')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Actualizar
+                            </button>
+                            <a href="{{ route('marcas.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  @endif
-
-  <form action="{{ route('marcas.update', $marca) }}" method="POST">
-    @csrf
-    @method('PUT')
-
-    <div class="mb-3">
-      <label for="nombre" class="form-label">Nombre *</label>
-      <input type="text" name="nombre" id="nombre" class="form-control" value="{{ $marca->nombre }}" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="descripcion" class="form-label">Descripción</label>
-      <textarea name="descripcion" id="descripcion" class="form-control">{{ $marca->descripcion }}</textarea>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Actualizar</button>
-    <a href="{{ route('marcas.index') }}" class="btn btn-secondary">Cancelar</a>
-  </form>
 </div>
-
-</body>
-</html>
+@endsection

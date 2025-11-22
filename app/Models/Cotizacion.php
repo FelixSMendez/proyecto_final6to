@@ -8,8 +8,12 @@ class Cotizacion extends Model
 {
     protected $table = 'cotizacion';
     protected $fillable = [
-        'id_cliente', 'fecha', 'fecha_vencimiento', 'total', 
-        'estado', 'pdf_path'
+        'id_cliente', 
+        'fecha', 
+        'fecha_vencimiento', 
+        'total', 
+        'estado', 
+        'pdf_path'
     ];
     protected $casts = [
         'fecha' => 'date',

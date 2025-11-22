@@ -211,9 +211,9 @@
                 
                 <strong style="margin-top: 15px;">ESTADO:</strong>
                 @if($factura->estado === 'pagada')
-                    <span style="color: #28a745; font-weight: bold;">✓ PAGADA</span>
+                    <span style="color: #28a745; font-weight: bold;"> PAGADA</span>
                 @else
-                    <span style="color: #ffc107; font-weight: bold;">⏳ {{ strtoupper($factura->estado) }}</span>
+                    <span style="color: #ffc107; font-weight: bold;"> {{ strtoupper($factura->estado) }}</span>
                 @endif
             </div>
         </div>
@@ -283,7 +283,7 @@
         <!-- PAYMENT DETAILS -->
         @if($factura->pagos->count() > 0)
             <div class="payment-details">
-                <h3>💳 DETALLES DE PAGO</h3>
+                <h3> DETALLES DE PAGO</h3>
                 @foreach($factura->pagos as $pago)
                     <div class="payment-method">
                         <strong>{{ $pago->tipoPago->nombre }}</strong>

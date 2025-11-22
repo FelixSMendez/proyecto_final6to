@@ -1,38 +1,45 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Nuevo Tipo de Medida</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="p-4">
+@extends('layouts.app')
+
+@section('content')
 <div class="container">
-    <h1 class="mb-4">Registrar Tipo de Medida</h1>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Crear Tipo de Medida</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('tipomedidas.store') }}" method="POST">
+                        @csrf
 
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-            </ul>
-        </div>
-    @endif
+                        <div class="mb-3">
+                            <label for="tipo" class="form-label">Tipo *</label>
+                            <input type="text" class="form-control @error('tipo') is-invalid @enderror" id="tipo" name="tipo" value="{{ old('tipo') }}" required maxlength="50" placeholder="Ej: 1/32, 1/16, 1/8, etc">
+                            @error('tipo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-    <form action="{{ route('tipomedidas.store') }}" method="POST">
-        @csrf
-        <div class="mb-3">
-            <label for="tipo" class="form-label">Tipo</label>
-            <input type="text" name="tipo" id="tipo" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label for="descripcion" class="form-label">Descripción</label>
-            <input type="text" name="descripcion" id="descripcion" class="form-control">
-        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control @error('descripcion') is-invalid @enderror" id="descripcion" name="descripcion" rows="3" maxlength="200">{{ old('descripcion') }}</textarea>
+                            @error('descripcion')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="{{ route('tipomedidas.index') }}" class="btn btn-secondary">Volver</a>
-    </form>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Guardar
+                            </button>
+                            <a href="{{ route('tipomedidas.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</body>
-</html>
+@endsection

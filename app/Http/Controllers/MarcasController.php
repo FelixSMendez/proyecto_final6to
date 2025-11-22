@@ -21,7 +21,7 @@ class MarcasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|unique:marcas,nombre|max:100',
+            'marca' => 'required|string|unique:marcas,nombre|max:100',
             'descripcion' => 'nullable|string',
         ]);
 
@@ -37,7 +37,7 @@ class MarcasController extends Controller
     public function update(Request $request, Marca $marca)
     {
         $request->validate([
-            'nombre' => 'required|string|unique:marcas,nombre,' . $marca->id . '|max:100',
+            'marca' => 'required|string|unique:marcas,nombre,' . $marca->id . '|max:100',
             'descripcion' => 'nullable|string',
         ]);
 

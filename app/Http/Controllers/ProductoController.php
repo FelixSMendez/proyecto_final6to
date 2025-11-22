@@ -2,17 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetalleProducto;
+use App\Models\Producto;
 use App\Models\TipoProducto;
-use App\Models\TipoMedida;
-use App\Models\Marca;
 use Illuminate\Http\Request;
+use App\Models\DetalleProducto;
+use App\Models\Marca;
 
 class ProductoController extends Controller
 {
+    public function indice()
+    {
+        $productos = Producto::with('tipoProducto')->paginate(10);
+        return view('productos.index', compact('productos'));
+    }
+
+    public function create()
+    {
+        $tipos = TipoProducto::all();
+        return view('productos.create', compact('tipos'));
+    }
+
+
     /**
      * Mostrar catálogo (por DetalleProducto)
      */
+
     public function index(Request $request)
     {
         $query = DetalleProducto::with(['producto', 'marca', 'tipoMedida', 'producto.tipoProducto', 'precios']);
@@ -67,6 +81,24 @@ class ProductoController extends Controller
         return view('catalogo.index', compact('detalles', 'tipos', 'marcas'));
     }
 
+    public function edit(Producto $producto)
+    {
+        $tipos = TipoProducto::all();
+        return view('productos.edit', compact( 'producto', 'tipos'));
+    }
+
+    public function store(Request $request)  // ✅ AGREGAR
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:100',
+            'descripcion' => 'nullable|string|max:255',
+            'id_tipoProducto' => 'required|exists:tipoproducto,id',
+        ]);
+
+        Producto::create($request->all());
+        return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente');
+    }
+
     /**
      * Mostrar detalle de producto
      */
@@ -85,4 +117,24 @@ class ProductoController extends Controller
 
         return view('catalogo.show', compact('detalle', 'productosSimilares'));
     }
+
+    public function update(Request $request, Producto $producto)  // ✅ AGREGAR
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:100',
+            'descripcion' => 'nullable|string|max:255',
+            'id_tipoProducto' => 'required|exists:tipoproducto,id',
+        ]);
+
+        $producto->update($request->all());
+        return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente');
+    }
+
+    public function destroy(Producto $producto)  // ✅ AGREGAR
+    {
+        $producto->delete();
+        return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente');
+    }
+
+
 }

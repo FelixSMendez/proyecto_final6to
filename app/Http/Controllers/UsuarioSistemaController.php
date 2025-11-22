@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\UsuarioSistema;
 use App\Models\Empleado;
-use App\Models\Cliente;
 use Illuminate\Http\Request;
 
 class UsuarioSistemaController extends Controller
@@ -18,7 +17,6 @@ class UsuarioSistemaController extends Controller
     public function create()
     {
         $empleados = Empleado::all();
-        $clientes = Cliente::all();
         return view('usuariosistema.create', compact('empleados', 'clientes'));
     }
 
@@ -28,7 +26,6 @@ class UsuarioSistemaController extends Controller
             'usuario' => 'required|string|max:50',
             'contrasena' => 'required|string|max:200',
             'id_empleado' => 'nullable|exists:empleado,id',
-            'id_cliente' => 'nullable|exists:cliente,id',
         ]);
 
         UsuarioSistema::create($request->all());
@@ -38,8 +35,7 @@ class UsuarioSistemaController extends Controller
     public function edit(UsuarioSistema $usuariosistema)
     {
         $empleados = Empleado::all();
-        $clientes = Cliente::all();
-        return view('usuariosistema.edit', compact('usuariosistema', 'empleados', 'clientes'));
+        return view('usuariosistema.edit', compact('usuariosistema', 'empleados'));
     }
 
     public function update(Request $request, UsuarioSistema $usuariosistema)
@@ -48,7 +44,6 @@ class UsuarioSistemaController extends Controller
             'usuario' => 'required|string|max:50',
             'contrasena' => 'required|string|max:200',
             'id_empleado' => 'nullable|exists:empleado,id',
-            'id_cliente' => 'nullable|exists:cliente,id',
         ]);
 
         $usuariosistema->update($request->all());

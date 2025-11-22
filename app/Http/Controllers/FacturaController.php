@@ -128,7 +128,7 @@ public function store(Request $request)
             'descuento_aplicado' => 0,
         ]);
 
-        // ✅ DESCONTAR DE LA SUCURSAL DEL EMPLEADO
+        //  DESCONTAR DE LA SUCURSAL DEL EMPLEADO
         $this->descontarStock($item['id_detalle'], $item['cantidad'], $sucursal_id);
     }
 

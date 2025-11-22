@@ -9,6 +9,15 @@ use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\GerenceController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\LoteController;
+use App\Http\Controllers\TipoProductoController;
+use App\Http\Controllers\MarcaController;
+use App\Http\Controllers\TipoMedidaController;
+use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\SucursalController;
+use App\Http\Controllers\DetalleProductoController;
+use App\Http\Controllers\TipoPagoController;
+use App\Http\Controllers\UsuarioSistemaController;
 
 Route::get('/', [App\Http\Controllers\ProductoController::class, 'index'])->name('home');
 
@@ -52,7 +61,7 @@ Route::get('/factura/{id}/pago', [FacturaController::class, 'showPago'])->name('
 Route::post('/factura/{id}/pago', [FacturaController::class, 'guardarPago'])->name('factura.guardarPago');
 Route::get('/factura/{id}/confirmacion', [FacturaController::class, 'confirmacion'])->name('factura.confirmacion');
 
-// ✅ RUTAS PÚBLICAS - Cualquiera puede descargar facturas y cotizaciones
+//  RUTAS PÚBLICAS - Cualquiera puede descargar facturas y cotizaciones
 Route::get('/pdf/factura/{id}/descargar', [App\Http\Controllers\PdfController::class, 'descargarFactura'])->name('pdf.factura.descargar');
 Route::get('/pdf/factura/{id}/preview', [App\Http\Controllers\PdfController::class, 'previewFactura'])->name('pdf.factura.preview');
 Route::get('/pdf/cotizacion/{id}/descargar', [App\Http\Controllers\PdfController::class, 'descargarCotizacion'])->name('pdf.cotizacion.descargar');
@@ -91,7 +100,7 @@ Route::middleware(['auth:employee'])->group(function () {
 });
 
 
-// ✅ RUTAS COTIZACIONES
+//  RUTAS COTIZACIONES
 Route::middleware('auth:cliente')->group(function () {
     Route::get('/cotizaciones', [App\Http\Controllers\CotizacionController::class, 'index'])->name('cotizacion.index');
     Route::post('/cotizaciones/crear', [App\Http\Controllers\CotizacionController::class, 'crear'])->name('cotizacion.crear');
@@ -124,7 +133,23 @@ Route::middleware(['auth:employee'])->prefix('gerente')->group(function () {
     Route::post('/factura/{id}/anular', [GerenceController::class, 'anularFactura'])->name('gerente.factura-anular-guardar');
 });
 
-
+Route::controller(ProductoController::class)->group(function () {
+    Route::get('/productos', 'indice')->name('productos.index');
+    Route::get('/productos/create', 'create')->name('productos.create');
+    Route::post('/productos', 'store')->name('productos.store');
+    Route::get('/productos/{producto}/edit', 'edit')->name('productos.edit');
+    Route::put('/productos/{producto}', 'update')->name('productos.update');
+    Route::delete('/productos/{producto}', 'destroy')->name('productos.destroy');
+});
+Route::resource('tipoproductos', TipoProductoController::class);
+Route::resource('marcas', MarcasController::class);
+Route::resource('tipomedidas', TipoMedidaController::class);
+Route::resource('proveedores', ProveedorController::class);
+Route::resource('clientes', ClienteController::class);
+Route::resource('sucursales', SucursalController::class);
+Route::resource('detalleproductos', DetalleProductoController::class);
+Route::resource('tipopagos', TipoPagoController::class);
+Route::resource('usuariosistema', UsuarioSistemaController::class);
 // ====================================
 // AUTH ROUTES (Breeze) - Login/Logout Empleados
 // ====================================
