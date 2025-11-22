@@ -119,7 +119,7 @@
     <a href="{{ route('gerente.reporte-inventario-tienda') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
         <div class="card-body text-center">
             <i class="fas fa-store fa-3x text-secondary mb-3"></i>
-            <h6 class="card-title">Reporte 8: Inventario por Tienda</h6>
+            <h6 class="card-title">Reporte 5: Inventario por Tienda</h6>
             <p class="card-text small text-muted">Stock desglosado por cada sucursal</p>
             <small class="font-weight-bold">Pradera | Miraflores | Otros</small>
         </div>

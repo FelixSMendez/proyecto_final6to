@@ -17,5 +17,6 @@ class Cliente extends Model
         'direccion',
         'telefono',
         'gps',
+        'tipo',
     ];
 }

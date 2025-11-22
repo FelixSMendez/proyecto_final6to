@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('nombre', 100);
             $table->string('direccion', 200)->nullable();
             $table->string('ciudad', 100)->nullable();
-            
             $table->timestamps();
         });
     }

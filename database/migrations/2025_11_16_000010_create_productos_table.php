@@ -13,10 +13,7 @@ return new class extends Migration
             $table->string('nombre', 100);
             $table->string('descripcion', 255);
             $table->unsignedBigInteger('id_tipoProducto')->nullable();
-
             $table->foreign('id_tipoProducto')->references('id')->on('tipoproducto')->onDelete('set null');
-
-
             $table->timestamps();
         });
     }
