@@ -9,7 +9,7 @@ class MarcasController extends Controller
 {
     public function index()
     {
-        $marcas = Marca::all();
+        $marcas = Marca::paginate(15);
         return view('marcas.index', compact('marcas'));
     }
 

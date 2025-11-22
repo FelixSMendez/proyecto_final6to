@@ -16,11 +16,17 @@ class Empleado extends Model
         'apellido',
         'email',
         'id_rol',
+        'id_sucursal',
     ];
 
     // Relación con Rol
     public function rol()
     {
         return $this->belongsTo(Rol::class, 'id_rol');
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'id_sucursal');
     }
 }

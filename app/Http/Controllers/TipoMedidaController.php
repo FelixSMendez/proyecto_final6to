@@ -9,7 +9,7 @@ class TipoMedidaController extends Controller
 {
     public function index()
     {
-        $tipomedidas = TipoMedida::all();
+        $tipomedidas = TipoMedida::paginate(15);
         return view('tipomedidas.index', compact('tipomedidas'));
     }
 

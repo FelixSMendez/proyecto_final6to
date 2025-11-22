@@ -40,7 +40,7 @@
             <div class="card border-left-warning shadow-sm h-100">
                 <div class="card-body">
                     <div class="text-warning font-weight-bold text-uppercase small">Lotes Ingresados</div>
-                    <div class="h3 mb-0">{{ \App\Models\Lote::count() }}</div>
+                    <div class="h3 mb-0">{{ \App\Models\Lote::count() ?? 0 }}</div>
                     <p class="small text-muted mt-2">Este mes</p>
                 </div>
             </div>
@@ -68,7 +68,7 @@
     <div class="row">
         <!-- Gestión de Productos -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('productos.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-box fa-3x text-primary mb-3"></i>
                     <h6 class="card-title">Productos</h6>
@@ -80,7 +80,7 @@
 
         <!-- Tipos de Productos -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('tipoproductos.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-list fa-3x text-info mb-3"></i>
                     <h6 class="card-title">Tipos de Productos</h6>
@@ -92,7 +92,7 @@
 
         <!-- Marcas -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('marcas.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-tag fa-3x text-warning mb-3"></i>
                     <h6 class="card-title">Marcas</h6>
@@ -104,7 +104,7 @@
 
         <!-- Medidas -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('tipomedidas.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-ruler-vertical fa-3x text-secondary mb-3"></i>
                     <h6 class="card-title">Tipos de Medida</h6>
@@ -116,7 +116,7 @@
 
         <!-- Proveedores -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('proveedores.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-truck fa-3x text-dark mb-3"></i>
                     <h6 class="card-title">Proveedores</h6>
@@ -128,19 +128,19 @@
 
         <!-- Ingreso de Lotes -->
         <div class="col-md-4 mb-3">
-    <a href="{{ route('almacen.lotes.create') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
-        <div class="card-body text-center">
-            <i class="fas fa-dolly fa-3x text-success mb-3"></i>
-            <h6 class="card-title">Ingreso de Lotes</h6>
-            <p class="card-text small text-muted">Registrar ingresos de inventario con proveedor</p>
-            <small class="text-success font-weight-bold">✓ Acceso: ABM Completo</small>
+            <a href="{{ route('almacen.lotes.create') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+                <div class="card-body text-center">
+                    <i class="fas fa-dolly fa-3x text-success mb-3"></i>
+                    <h6 class="card-title">Ingreso de Lotes</h6>
+                    <p class="card-text small text-muted">Registrar ingresos de inventario con proveedor</p>
+                    <small class="text-success font-weight-bold">✓ Acceso: ABM Completo</small>
+                </div>
+            </a>
         </div>
-    </a>
-</div>
 
         <!-- Clientes -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('clientes.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-users fa-3x text-primary mb-3"></i>
                     <h6 class="card-title">Clientes</h6>
@@ -152,7 +152,7 @@
 
         <!-- Sucursales -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('sucursales.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-store fa-3x text-info mb-3"></i>
                     <h6 class="card-title">Sucursales</h6>
@@ -162,13 +162,48 @@
             </a>
         </div>
 
-        <!-- Inventario por Sucursal -->
+        <!-- Detalles de Producto -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('detalleproductos.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
-                    <i class="fas fa-warehouse fa-3x text-warning mb-3"></i>
-                    <h6 class="card-title">Inventario</h6>
-                    <p class="card-text small text-muted">Ver stock por producto y sucursal</p>
+                    <i class="fas fa-palette fa-3x text-secondary mb-3"></i>
+                    <h6 class="card-title">Detalles de Producto</h6>
+                    <p class="card-text small text-muted">Colores, acabados y especificaciones</p>
+                    <small class="text-success font-weight-bold">✓ Acceso: ABM Completo</small>
+                </div>
+            </a>
+        </div>
+        <!-- Usuarios del Sistema (Empleados) -->
+        <div class="col-md-4 mb-3">
+            <a href="{{ route('usuariosistema.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-tie fa-3x text-warning mb-3"></i>
+                    <h6 class="card-title">Usuarios del Sistema</h6>
+                    <p class="card-text small text-muted">Gestionar empleados y acceso del sistema</p>
+                    <small class="text-success font-weight-bold">✓ Acceso: ABM Completo</small>
+                </div>
+            </a>
+        </div>
+
+        <!-- Usuarios Cliente -->
+        <div class="col-md-4 mb-3">
+            <a href="{{ route('usuariocliente.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-check fa-3x text-info mb-3"></i>
+                    <h6 class="card-title">Usuarios Cliente</h6>
+                    <p class="card-text small text-muted">Gestionar accesos de clientes web</p>
+                    <small class="text-success font-weight-bold">✓ Acceso: ABM Completo</small>
+                </div>
+            </a>
+        </div>
+
+        <!-- Ver Lotes -->
+        <div class="col-md-4 mb-3">
+            <a href="{{ route('almacen.lotes.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+                <div class="card-body text-center">
+                    <i class="fas fa-list-check fa-3x text-info mb-3"></i>
+                    <h6 class="card-title">Ver Lotes</h6>
+                    <p class="card-text small text-muted">Historial de ingresos de inventario</p>
                     <small class="text-success font-weight-bold">✓ Acceso: Lectura</small>
                 </div>
             </a>
@@ -185,6 +220,7 @@
             <li>❌ NO puedes ver reportes (únicamente para Gerente)</li>
             <li>❌ NO puedes procesar pagos ni cobros</li>
             <li>✅ Puedes crear, modificar y ver todo relacionado con datos maestros</li>
+            <li>✅ Puedes ingresar lotes de inventario desde proveedores</li>
         </ul>
     </div>
 </div>

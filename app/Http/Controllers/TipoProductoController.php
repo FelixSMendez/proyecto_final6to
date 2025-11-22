@@ -9,7 +9,7 @@ class TipoProductoController extends Controller
 {
     public function index()
     {
-        $tipos = TipoProducto::all();
+        $tipos = TipoProducto::paginate(15);
         return view('tiposproductos.index', compact('tipos'));
     }
 

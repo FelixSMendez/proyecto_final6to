@@ -10,7 +10,7 @@ class UsuarioClienteController extends Controller
 {
     public function index()
     {
-        $usuariosc = UsuarioCliente::all();
+        $usuariosc = UsuarioCliente::paginate(15);
         return view('usuariocliente.index', compact('usuariosc'));
     }
 
