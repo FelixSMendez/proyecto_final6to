@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class InventarioController extends Controller
 {
-    // ✅ Listar inventario
+    // Listar inventario
     public function index()
     {
         $inventarios = Inventario::with('detalleProducto.producto', 'sucursal')
@@ -18,7 +18,7 @@ class InventarioController extends Controller
         return view('inventario.index', compact('inventarios'));
     }
 
-    // ✅ Crear formulario
+    // Crear formulario
     public function create()
     {
         $detallesProducto = DetalleProducto::with('producto')->get();
@@ -27,7 +27,7 @@ class InventarioController extends Controller
         return view('inventario.create', compact('detallesProducto', 'sucursales'));
     }
 
-    // ✅ Guardar inventario
+    // Guardar inventario
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -46,7 +46,7 @@ class InventarioController extends Controller
             ->with('success', 'Inventario creado correctamente');
     }
 
-    // ✅ Editar
+    // Editar
     public function edit(Inventario $inventario)
     {
         $detallesProducto = DetalleProducto::with('producto')->get();
@@ -55,7 +55,7 @@ class InventarioController extends Controller
         return view('inventario.edit', compact('inventario', 'detallesProducto', 'sucursales'));
     }
 
-    // ✅ Actualizar
+    // Actualizar
     public function update(Request $request, Inventario $inventario)
     {
         $validated = $request->validate([
@@ -74,7 +74,7 @@ class InventarioController extends Controller
             ->with('success', 'Inventario actualizado correctamente');
     }
 
-    // ✅ Eliminar
+    // Eliminar
     public function destroy(Inventario $inventario)
     {
         $inventario->delete();
@@ -83,7 +83,7 @@ class InventarioController extends Controller
             ->with('success', 'Inventario eliminado correctamente');
     }
 
-    // ✅ Ver detalle
+    // Ver detalle
     public function show(Inventario $inventario)
     {
         $inventario->load('detalleProducto.producto', 'sucursal');
@@ -91,7 +91,7 @@ class InventarioController extends Controller
         return view('inventario.show', compact('inventario'));
     }
 
-    // ✅ Alertas de bajo stock
+    // Alertas de bajo stock
     public function alertasStock()
     {
         $alertas = Inventario::whereRaw('stock_actual <= stock_minimo')

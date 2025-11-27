@@ -11,14 +11,14 @@ use Illuminate\Http\Request;
 
 class CotizacionController extends Controller
 {
-    // ✅ LISTAR COTIZACIONES
+    // LISTAR COTIZACIONES
     public function index()
     {
         $cotizaciones = Cotizacion::with(['cliente', 'detalles'])->get();
         return view('cotizacion.index', compact('cotizaciones'));
     }
 
-    // ✅ CREAR COTIZACIÓN DESDE CARRITO
+    // CREAR COTIZACIÓN DESDE CARRITO
     public function crear(Request $request)
     {
         // Obtener cliente autenticado
@@ -106,7 +106,7 @@ class CotizacionController extends Controller
                         ->with('success', 'Cotización creada exitosamente');
     }
 
-    // ✅ VER DETALLES DE COTIZACIÓN
+    // VER DETALLES DE COTIZACIÓN
     public function show($id)
     {
         $cotizacion = Cotizacion::with(['cliente', 'detalles.detalleProducto.producto'])->findOrFail($id);
@@ -126,7 +126,7 @@ class CotizacionController extends Controller
         return redirect()->back()->with('success', 'Estado actualizado');
     }
 
-    // ✅ DESCARGAR PDF DE COTIZACIÓN
+    // DESCARGAR PDF DE COTIZACIÓN
     public function descargarPDF($id)
     {
         $cotizacion = Cotizacion::with(['detalles.detalleProducto.producto', 'cliente'])->findOrFail($id);
@@ -143,7 +143,7 @@ class CotizacionController extends Controller
         return $pdf->download('Cotizacion_' . $cotizacion->id . '.pdf');
     }
 
-    // ✅ ELIMINAR COTIZACIÓN
+    // ELIMINAR COTIZACIÓN
     public function destroy($id)
     {
         $cotizacion = Cotizacion::findOrFail($id);

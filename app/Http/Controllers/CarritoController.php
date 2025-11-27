@@ -46,7 +46,7 @@ class CarritoController extends Controller
             'color' => $detalle->color ?? '',
             'precio' => $detalle->obtenerPrecio('minorista'),
             'cantidad' => 0,
-            'id_sucursal' => $inventario->id_sucursal, // ✅ sucursal por defecto
+            'id_sucursal' => $inventario->id_sucursal, 
         ];
     }
 

@@ -55,7 +55,7 @@
                                 @foreach($marcas as $marca)
                                     <label class="list-group-item">
                                         <input class="form-check-input me-2" type="radio" name="marca" value="{{ $marca->id }}" {{ request('marca') == $marca->id ? 'checked' : '' }}>
-                                        {{ $marca->nombre }}
+                                        {{ $marca->marca }}
                                     </label>
                                 @endforeach
                             </div>
@@ -111,7 +111,7 @@
 
                                     <!-- Detalles -->
                                     <div class="small mb-2">
-                                        <span class="badge bg-light text-dark">{{ $detalle->marca->nombre ?? 'N/A' }}</span>
+                                        <span class="badge bg-light text-dark">{{ $detalle->marca->marca ?? 'N/A' }}</span>
                                         <span class="badge bg-light text-dark">{{ $detalle->tipoMedida->nombre ?? 'N/A' }}</span>
                                     </div>
 

@@ -87,7 +87,7 @@ class ProductoController extends Controller
         return view('productos.edit', compact( 'producto', 'tipos'));
     }
 
-    public function store(Request $request)  // ✅ AGREGAR
+    public function store(Request $request)
     {
         $request->validate([
             'nombre' => 'required|string|max:100',
@@ -118,7 +118,7 @@ class ProductoController extends Controller
         return view('catalogo.show', compact('detalle', 'productosSimilares'));
     }
 
-    public function update(Request $request, Producto $producto)  // ✅ AGREGAR
+    public function update(Request $request, Producto $producto)
     {
         $request->validate([
             'nombre' => 'required|string|max:100',
@@ -130,7 +130,7 @@ class ProductoController extends Controller
         return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente');
     }
 
-    public function destroy(Producto $producto)  // ✅ AGREGAR
+    public function destroy(Producto $producto)
     {
         $producto->delete();
         return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente');

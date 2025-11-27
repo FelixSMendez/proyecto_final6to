@@ -22,7 +22,7 @@
             
             <div class="mb-3">
                 <span class="badge bg-primary">{{ $detalle->producto->tipoProducto->tipo ?? 'N/A' }}</span>
-                <span class="badge bg-success">{{ $detalle->marca->nombre ?? 'N/A' }}</span>
+                <span class="badge bg-success">{{ $detalle->marca->marca ?? 'N/A' }}</span>
             </div>
 
             <p class="text-muted mb-4">{{ $detalle->descripcion }}</p>
@@ -62,8 +62,8 @@
                     <h6 class="card-title fw-bold">Información</h6>
                     <ul class="list-unstyled">
                         <li><strong>Tipo:</strong> {{ $detalle->producto->tipoProducto->tipo ?? 'N/A' }}</li>
-                        <li><strong>Marca:</strong> {{ $detalle->marca->nombre ?? 'N/A' }}</li>
-                        <li><strong>Medida:</strong> {{ $detalle->tipoMedida->nombre ?? 'N/A' }}</li>
+                        <li><strong>Marca:</strong> {{ $detalle->marca->marca ?? 'N/A' }}</li>
+                        <li><strong>Medida:</strong> {{ $detalle->tipoMedida->tipo ?? 'N/A' }}</li>
                         <li><strong>Color:</strong> {{ $detalle->color_acabado ?? 'N/A' }}</li>
                     </ul>
                 </div>

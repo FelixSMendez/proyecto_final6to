@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <p><strong>Cliente:</strong> {{ $factura->cliente->usuario }}</p>
+                            <p><strong>Cliente:</strong> {{optional($factura->cliente)->getNombre() ?? 'Web'}}</p>
                             <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($factura->fecha)->format('d/m/Y H:i') }}</p>
                         </div>
                         <div class="col-md-6 text-end">
@@ -184,6 +184,7 @@
 </div>
 
 <script>
+
 function mostrarCampos() {
     const tipoId = document.getElementById('tipoPago').value;
     const tiposPago = @json($tiposPago->pluck('nombre', 'id'));
@@ -195,6 +196,7 @@ function mostrarCampos() {
     document.getElementById('cambioDiv').style.display = 'none';
 
     if (tipoId) {
+        
         const tipoNombre = tiposPago[tipoId]?.toLowerCase();
         
         if (tipoNombre && tipoNombre.includes('efectivo')) {

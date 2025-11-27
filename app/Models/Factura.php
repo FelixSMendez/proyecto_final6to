@@ -29,10 +29,9 @@ class Factura extends Model
         'fecha' => 'datetime',
         'total' => 'float',
         'estado' => 'string',
-        // ❌ REMOVE 'fecha_anulacion' => 'dateTime'  ← Quita esta línea
     ];
 
-    // ✅ MUTADOR para manejar fecha_anulacion correctamente
+    // MUTADOR para manejar fecha_anulacion correctamente
     public function setFechaAnulacionAttribute($value)
     {
         if ($value === null) {
@@ -46,7 +45,7 @@ class Factura extends Model
 
     public function cliente()
     {
-        return $this->belongsTo(Cliente::class, 'id_cliente');
+        return $this->belongsTo(UsuarioCliente::class, 'id_cliente');
     }
 
     public function empleado()

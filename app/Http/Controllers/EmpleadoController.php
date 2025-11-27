@@ -4,20 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Empleado;
 use App\Models\Rol;
+use App\Models\Sucursal;
 use Illuminate\Http\Request;
 
 class EmpleadoController extends Controller
 {
     public function index()
     {
-        $empleados = Empleado::with('rol')->get();
+        $empleados = Empleado::with(['rol', 'sucursal'])->paginate(15);
         return view('empleados.index', compact('empleados'));
     }
 
     public function create()
     {
         $roles = Rol::all();
-        return view('empleados.create', compact('roles'));
+        $sucursales = Sucursal::all();
+        return view('empleados.create', compact('roles', 'sucursales'));
     }
 
     public function store(Request $request)
@@ -25,19 +27,20 @@ class EmpleadoController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:100',
             'apellido' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100',
-            'id_rol' => 'nullable|exists:rol,id',
+            'email' => 'required|email|max:100|unique:empleado,email',
+            'id_rol' => 'required|exists:rol,id',
+            'id_sucursal' => 'required|exists:sucursal,id',
         ]);
 
         Empleado::create($request->all());
-
         return redirect()->route('empleados.index')->with('success', 'Empleado creado correctamente.');
     }
 
     public function edit(Empleado $empleado)
     {
         $roles = Rol::all();
-        return view('empleados.edit', compact('empleado', 'roles'));
+        $sucursales = Sucursal::all();
+        return view('empleados.edit', compact('empleado', 'roles', 'sucursales'));
     }
 
     public function update(Request $request, Empleado $empleado)
@@ -45,12 +48,12 @@ class EmpleadoController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:100',
             'apellido' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100',
-            'id_rol' => 'nullable|exists:rol,id',
+            'email' => 'required|email|max:100|unique:empleado,email,' . $empleado->id,
+            'id_rol' => 'required|exists:rol,id',
+            'id_sucursal' => 'required|exists:sucursal,id',
         ]);
 
         $empleado->update($request->all());
-
         return redirect()->route('empleados.index')->with('success', 'Empleado actualizado correctamente.');
     }
 

@@ -14,7 +14,7 @@ use Carbon\Carbon;
 
 class GerenceController extends Controller
 {
-    // ✅ DASHBOARD DEL GERENTE
+    // DASHBOARD DEL GERENTE
     public function dashboard()
     {
         $hoy = Carbon::today();
@@ -40,10 +40,10 @@ class GerenceController extends Controller
     }
 
     // ========================================
-    // 📊 REPORTES - RETORNA VISTAS
+    //REPORTES - RETORNA VISTAS
     // ========================================
 
-    // ✅ REPORTE 1: Total facturado por tipo de pago
+    // REPORTE 1: Total facturado por tipo de pago
     public function reporteMonto(Request $request)
     {
         $request->validate([
@@ -76,7 +76,7 @@ class GerenceController extends Controller
         return view('gerente.reportes.reporte-monto', ['data' => $data]);
     }
 
-    // ✅ REPORTE 2: Productos que más dinero generan
+    // REPORTE 2: Productos que más dinero generan
     public function reporteIngresos(Request $request)
 {
     $request->validate([
@@ -120,7 +120,7 @@ class GerenceController extends Controller
     return view('gerente.reportes.reporte-ingresos', ['data' => $data]);
 }
 
-    // ✅ REPORTE 3: Productos más vendidos por cantidad
+    // REPORTE 3: Productos más vendidos por cantidad
     public function reporteVendidos(Request $request)
     {
         $request->validate([
@@ -164,7 +164,7 @@ class GerenceController extends Controller
         return view('gerente.reportes.reporte-vendidos', ['data' => $data]);
     }
 
-    // ✅ REPORTE 4: Inventario actual general
+    // REPORTE 4: Inventario actual general
     public function reporteInventario()
     {
         $inventario = Inventario::with('detalleProducto.producto')
@@ -186,7 +186,7 @@ class GerenceController extends Controller
         return view('gerente.reportes.reporte-inventario', ['inventario' => $inventario]);
     }
 
-    // ✅ REPORTE 5: Inventario por tienda
+    // REPORTE 5: Inventario por tienda
     public function reporteInventarioTienda(Request $request)
     {
          $sucursal_id = $request->get('id_sucursal');
@@ -216,7 +216,7 @@ class GerenceController extends Controller
                compact('data', 'sucursales', 'sucursal_id'));
     }
 
-    // ✅ REPORTE 6: Productos menos vendidos
+    // REPORTE 6: Productos menos vendidos
     public function reporteMenosVendidos(Request $request)
     {
         $request->validate([
@@ -260,7 +260,7 @@ class GerenceController extends Controller
         return view('gerente.reportes.reporte-menos-vendidos', ['data' => $data]);
     }
 
-    // ✅ REPORTE 7: Productos sin stock
+    // REPORTE 7: Productos sin stock
     public function reporteSinStock()
     {
         $productos = Inventario::where('stock_actual', 0)
@@ -278,7 +278,7 @@ class GerenceController extends Controller
         return view('gerente.reportes.reporte-sin-stock', ['productos' => $productos]);
     }
 
-    // ✅ REPORTE 8: Stock mínimo
+    // REPORTE 8: Stock mínimo
     public function reporteStockMinimo()
     {
         $alertas = Inventario::whereRaw('stock_actual <= stock_minimo')
@@ -297,7 +297,7 @@ class GerenceController extends Controller
         return view('gerente.reportes.reporte-stock-minimo', ['alertas' => $alertas]);
     }
 
-    // ✅ REPORTE 9: Buscar factura por número
+    // REPORTE 9: Buscar factura por número
     public function reporteBuscarFactura(Request $request)
 {
     $factura = null;
@@ -327,7 +327,7 @@ class GerenceController extends Controller
     return view('gerente.reportes.reporte-buscar-factura', ['factura' => $factura]);
 }
 
-    // ✅ REPORTE 10: Ingresos al inventario (reabastecimiento por lotes)
+    // REPORTE 10: Ingresos al inventario (reabastecimiento por lotes)
     public function reporteIngresosInv(Request $request)
     {
         $fecha_inicio = $request->get('fecha_inicio', now()->format('Y-m-01'));
@@ -359,7 +359,7 @@ class GerenceController extends Controller
     //  ANULACIÓN DE FACTURAS
     // ========================================
 
-    // ✅ LISTAR FACTURAS PARA ANULAR
+    // LISTAR FACTURAS PARA ANULAR
 public function facturasAnular()
 {
     $facturas = Factura::with(['cliente', 'empleado'])
@@ -369,7 +369,7 @@ public function facturasAnular()
     return view('gerente.facturas-anular', compact('facturas'));
 }
 
-// ✅ MOSTRAR FACTURA PARA ANULAR (CON DETALLES COMPLETOS)
+// MOSTRAR FACTURA PARA ANULAR (CON DETALLES COMPLETOS)
 public function mostrarFacturaAnular($id)
 {
     $factura = Factura::with([
@@ -389,7 +389,7 @@ public function mostrarFacturaAnular($id)
     return view('gerente.factura-anular-detalle', compact('factura'));
 }
 
-// ✅ ANULAR FACTURA (CON VALIDACIONES COMPLETAS)
+// ANULAR FACTURA (CON VALIDACIONES COMPLETAS)
 public function anularFactura(Request $request, $id)
 {
     // Validar entrada

@@ -57,7 +57,7 @@ public function store(Request $request)
             'subtotal'          => (float) $item['precio'] * (int) $item['cantidad'],
         ]);
 
-        // ✅ Descontar stock de la sucursal seleccionada en el carrito
+        // Descontar stock de la sucursal seleccionada en el carrito
         $this->descontarStock(
             (int) $item['id_detalle'],
             (int) $item['cantidad'],
@@ -113,7 +113,7 @@ public function store(Request $request)
     'letra_serie' => 'A',
     'fecha' => now(),
     'id_cliente' => $request->id_cliente,
-    'id_empleado' => auth('employee')->id(),  // ✅ Aquí siempre hay empleado
+    'id_empleado' => auth('employee')->id(),  
     'id_sucursal' => $sucursal_id,
     'total' => $total,
 ]);
@@ -137,12 +137,12 @@ public function store(Request $request)
 }
 
     /**
-     * ✅ DESCONTAR STOCK AUTOMÁTICAMENTE
+     * DESCONTAR STOCK AUTOMÁTICAMENTE
      */
     private function descontarStock($id_detalleproducto, $cantidad, $id_sucursal = null)
 {
     try {
-        // ✅ SI NO VIENE SUCURSAL, DETECTARLA AUTOMÁTICAMENTE
+        // SI NO VIENE SUCURSAL, DETECTARLA AUTOMÁTICAMENTE
         if (!$id_sucursal) {
             // Si es empleado en tienda, usar su sucursal
             if (auth('employee')->check()) {
@@ -170,11 +170,11 @@ public function store(Request $request)
             return;
         }
 
-        // ✅ Descontar del inventario ESPECÍFICO DE LA SUCURSAL
+        // Descontar del inventario ESPECÍFICO DE LA SUCURSAL
         $inventario->decrement('stock_actual', $cantidad);
         $inventario->decrement('existencia', $cantidad);
 
-        // ✅ Descontar del lote más antiguo (FIFO) DE ESTA SUCURSAL
+        // Descontar del lote más antiguo (FIFO) DE ESTA SUCURSAL
         $lotes = Lote::where('id_detalleproducto', $id_detalleproducto)
                      ->where('id_sucursal', $id_sucursal)  // ← SOLO DE ESTA SUCURSAL
                      ->where('cantidad_actual', '>', 0)
@@ -240,7 +240,7 @@ public function store(Request $request)
         $factura = Factura::findOrFail($id);
         $tipoPago = TipoPago::find($request->id_tipo_pago);
 
-        // ✅ CALCULAR CAMBIO SI ES EFECTIVO
+        //  CALCULAR CAMBIO SI ES EFECTIVO
         $cambio = 0;
         if (strtolower($tipoPago->nombre) === 'efectivo' || strpos(strtolower($tipoPago->nombre), 'efectivo') !== false) {
             $cambio = (float) $request->monto_efectivo - (float) $request->monto;
@@ -249,7 +249,7 @@ public function store(Request $request)
             }
         }
 
-        // ✅ GUARDAR PAGO
+        //  GUARDAR PAGO
         Pago::create([
             'id_factura' => $id,
             'monto' => (float) $request->monto,
@@ -263,7 +263,7 @@ public function store(Request $request)
         $totalPagado = Pago::where('id_factura', $id)->sum('monto');
         $faltaPagar = $factura->total - $totalPagado;
 
-        // ✅ SI ESTÁ COMPLETAMENTE PAGADA, CAMBIAR ESTADO
+        //  SI ESTÁ COMPLETAMENTE PAGADA, CAMBIAR ESTADO
         if ($faltaPagar <= 0) {
             $factura->update(['estado' => 'pagada']);
             session()->forget('carrito');

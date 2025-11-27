@@ -211,7 +211,7 @@
 
         <!-- Gestionar Empleados -->
         <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+            <a href="{{ route('empleados.index')}}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
                 <div class="card-body text-center">
                     <i class="fas fa-users-cog fa-3x text-secondary mb-3"></i>
                     <h6 class="card-title">Gestionar Empleados</h6>
@@ -221,54 +221,6 @@
             </a>
         </div>
 
-        <!-- Auditoría y Logs -->
-        <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
-                <div class="card-body text-center">
-                    <i class="fas fa-history fa-3x text-info mb-3"></i>
-                    <h6 class="card-title">Auditoría</h6>
-                    <p class="card-text small text-muted">Registro de quién hizo qué, cuándo y dónde</p>
-                    <small class="text-success font-weight-bold">✓ Acceso: Lectura</small>
-                </div>
-            </a>
-        </div>
-
-        <!-- Exportar Reportes -->
-        <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
-                <div class="card-body text-center">
-                    <i class="fas fa-download fa-3x text-warning mb-3"></i>
-                    <h6 class="card-title">Exportar Reportes</h6>
-                    <p class="card-text small text-muted">Descargar cualquier reporte en XLS o PDF con logo</p>
-                    <small class="text-success font-weight-bold">✓ Acceso: Exportar</small>
-                </div>
-            </a>
-        </div>
-
-        <!-- Sistema de Backup -->
-        <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
-                <div class="card-body text-center">
-                    <i class="fas fa-save fa-3x text-primary mb-3"></i>
-                    <h6 class="card-title">Sistema de Backup</h6>
-                    <p class="card-text small text-muted">Crear/restaurar backup completo de base de datos</p>
-                    <small class="text-success font-weight-bold">✓ Acceso: Solo Gerente</small>
-                </div>
-            </a>
-        </div>
-
-        <!-- Configuración Sistema -->
-        <div class="col-md-4 mb-3">
-            <a href="#" class="card text-decoration-none border-0 shadow-sm h-100 transition">
-                <div class="card-body text-center">
-                    <i class="fas fa-sliders-h fa-3x text-secondary mb-3"></i>
-                    <h6 class="card-title">Configuración</h6>
-                    <p class="card-text small text-muted">Parámetros del sistema, IVA, correlativas facturas</p>
-                    <small class="text-success font-weight-bold">✓ Acceso: Modificar</small>
-                </div>
-            </a>
-        </div>
-    </div>
 
     <!-- Restricciones -->
     <div class="alert alert-info mt-4">

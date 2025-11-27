@@ -19,6 +19,7 @@ use App\Http\Controllers\DetalleProductoController;
 use App\Http\Controllers\TipoPagoController;
 use App\Http\Controllers\UsuarioSistemaController;
 use App\Http\Controllers\UsuarioClienteController;
+use App\Http\Controllers\EmpleadoController;
 
 // ====================================
 // RUTAS CATÁLOGO PÚBLICO (SIN AUTH)
@@ -150,7 +151,7 @@ Route::middleware(['auth:employee'])->group(function () {
         Route::get('/reporte-ingresos-inv', [GerenceController::class, 'reporteIngresosInv'])->name('gerente.reporte-ingresos-inv');
         Route::get('/reporte-stock-minimo', [GerenceController::class, 'reporteStockMinimo'])->name('gerente.reporte-stock-minimo');
         Route::get('/reporte-inventario-tienda/{id?}', [GerenceController::class, 'reporteInventarioTienda'])->name('gerente.reporte-inventario-tienda');
-        
+        Route::resource('empleados', EmpleadoController::class);
         // Anulación de facturas
         Route::get('/facturas-anular', [GerenceController::class, 'facturasAnular'])->name('gerente.facturas-anular');
         Route::get('/factura/{id}/anular', [GerenceController::class, 'mostrarFacturaAnular'])->name('gerente.factura-anular-detalle');
