@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         //$middleware->alias([
         //'es_gerente' => \App\Http\Middleware\GerenteMiddleware::class,
         //]);
+        $middleware->validateCsrfTokens(
+        except: [
+            '/gps/sucursal-mas-cercana',
+        ],
+    );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

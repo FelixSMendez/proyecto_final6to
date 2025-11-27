@@ -44,20 +44,26 @@
                             @enderror
                         </div>
 
+                        <!-- MAPA GOOGLE -->
                         <div class="mb-3">
-                            <label for="gps" class="form-label">GPS (Coordenadas)</label>
-                            <input type="text" class="form-control @error('gps') is-invalid @enderror" id="gps" name="gps" value="{{ old('gps') }}" placeholder="Ej: 14.6349, -90.5069" maxlength="100">
-                            @error('gps')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label fw-bold">Ubicación (Haz clic en el mapa para seleccionar)</label>
+                            <div id="map" style="width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px;"></div>
+                            <small class="text-muted d-block mb-2">Haz clic en el punto donde te ubicas. Se guardará automáticamente.</small>
+                            
+                            <input type="hidden" name="latitud" id="latitudCliente">
+                            <input type="hidden" name="longitud" id="longitudCliente">
+                            
+                            <div id="coordenadas" class="alert alert-info" style="display:none;">
+                                Ubicación seleccionada: <strong id="coordText"></strong>
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="tipo" class="form-label">Tipo *</label>
                             <select class="form-select @error('tipo') is-invalid @enderror" id="tipo" name="tipo" required>
                                 <option value="">-- Selecciona un tipo --</option>
-                                <option value="persona" {{ old('tipo') == 'persona' ? 'selected' : '' }}>Persona Natural</option>
-                                <option value="empresa" {{ old('tipo') == 'empresa' ? 'selected' : '' }}>Empresa</option>
+                                <option value="mayorista" {{ old('tipo') == 'mayorista' ? 'selected' : '' }}>Mayorista</option>
+                                <option value="minorista" {{ old('tipo') == 'minorista' ? 'selected' : '' }}>Minorista</option>
                             </select>
                             @error('tipo')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -79,3 +85,57 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script>
+let map;
+let marcador;
+
+function initMap() {
+    // Centro por defecto en Guatemala
+    const guatemala = { lat: 14.6349, lng: -90.5069 };
+
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: guatemala,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    // Escuchar clic en el mapa
+    map.addListener('click', (event) => {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        setLocation(lat, lng);
+    });
+}
+
+function setLocation(lat, lng) {
+    // Llenar inputs hidden
+    document.getElementById('latitudCliente').value = lat;
+    document.getElementById('longitudCliente').value = lng;
+
+    // Mostrar coordenadas
+    document.getElementById('coordText').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    document.getElementById('coordenadas').style.display = 'block';
+
+    // Eliminar marcador anterior si existe
+    if (marcador) {
+        marcador.setMap(null);
+    }
+
+    // Crear nuevo marcador
+    marcador = new google.maps.Marker({
+        position: { lat, lng },
+        map: map,
+        title: 'Tu ubicación'
+    });
+
+    // Centrar mapa en el marcador
+    map.setCenter({ lat, lng });
+}
+
+// Inicializar mapa cuando se cargue la página
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+@endpush

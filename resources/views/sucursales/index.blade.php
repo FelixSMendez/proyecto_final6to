@@ -5,11 +5,12 @@
     <div class="row mb-4">
         <div class="col-md-8">
             <h2><i class="fas fa-store me-2"></i>Sucursales</h2>
-        </div>
+        </div>  
         <div class="col-md-4 text-end">
             <a href="{{ route('sucursales.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Nueva Sucursal
             </a>
+            <a href="{{ route('dashboard.digitador') }}" class="btn btn-secondary">Volver</a>
         </div>
     </div>
 
@@ -29,6 +30,7 @@
                         <th>Nombre</th>
                         <th>Ciudad</th>
                         <th>Dirección</th>
+                        <th>Ubicación</th>
                         <th style="width: 150px;">Acciones</th>
                     </tr>
                 </thead>
@@ -39,6 +41,15 @@
                             <td><strong>{{ $sucursal->nombre }}</strong></td>
                             <td>{{ $sucursal->ciudad }}</td>
                             <td>{{ Str::limit($sucursal->dirección, 40) }}</td>
+                            <td>
+                                @if($sucursal->latitud && $sucursal->longitud)
+                                    <a href="https://maps.google.com/?q={{ $sucursal->latitud }},{{ $sucursal->longitud }}" target="_blank" class="btn btn-sm btn-info">
+                                        <i class="fas fa-map-marker-alt me-1"></i>Ver Mapa
+                                    </a>
+                                @else
+                                    <span class="badge bg-warning">Sin ubicación</span>
+                                @endif
+                            </td>
                             <td>
                                 <a href="{{ route('sucursales.edit', $sucursal->id) }}" class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit me-1"></i>Editar
@@ -54,7 +65,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
+                            <td colspan="6" class="text-center text-muted py-4">
                                 <i class="fas fa-inbox me-2"></i>No hay sucursales registradas
                             </td>
                         </tr>

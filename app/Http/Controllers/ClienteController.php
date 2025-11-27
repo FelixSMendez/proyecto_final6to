@@ -25,10 +25,21 @@ class ClienteController extends Controller
             'email' => 'nullable|email|max:100',
             'direccion' => 'nullable|string|max:200',
             'telefono' => 'nullable|string|max:20',
-            'gps' => 'nullable|string|max:100',
+            'tipo'      => 'required|in:mayorista,minorista',
+            'latitud'  => 'nullable|numeric',
+            'longitud' => 'nullable|numeric',
+            
         ]);
 
-        Cliente::create($request->all());
+        Cliente::create([
+            'nombre'    => $request->nombre,
+            'email'     => $request->email,
+            'dirección' => $request->dirección,
+            'teléfono'  => $request->teléfono,
+            'tipo'      => $request->tipo,
+            'latitud'   => $request->latitud,
+            'longitud'  => $request->longitud,
+        ]);
 
         return redirect()->route('clientes.index')->with('success', 'Cliente creado correctamente.');
     }
@@ -41,14 +52,24 @@ class ClienteController extends Controller
     public function update(Request $request, Cliente $cliente)
     {
         $request->validate([
-            'nombre' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100',
-            'direccion' => 'nullable|string|max:200',
-            'telefono' => 'nullable|string|max:20',
-            'gps' => 'nullable|string|max:100',
+            'nombre'    => 'required|string|max:100',
+            'email'     => 'nullable|email|max:100',
+            'dirección' => 'nullable|string|max:150',
+            'teléfono'  => 'nullable|string|max:20',
+            'tipo'      => 'required|in:mayorista,minorista',
+            'latitud'   => 'nullable|numeric',
+            'longitud'  => 'nullable|numeric',
         ]);
 
-        $cliente->update($request->all());
+         $cliente->update([
+            'nombre'    => $request->nombre,
+            'email'     => $request->email,
+            'dirección' => $request->dirección,
+            'teléfono'  => $request->teléfono,
+            'tipo'      => $request->tipo,
+            'latitud'   => $request->latitud,
+            'longitud'  => $request->longitud,
+        ]);
 
         return redirect()->route('clientes.index')->with('success', 'Cliente actualizado correctamente.');
     }

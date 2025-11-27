@@ -11,7 +11,9 @@ class Sucursal extends Model
     [
         'nombre', 
         'direccion', 
-        'ciudad'
+        'ciudad',
+        'latitud',
+        'longitud'
     ];
 
     public function inventarios()

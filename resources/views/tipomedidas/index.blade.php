@@ -6,10 +6,12 @@
         <div class="col-md-8">
             <h2><i class="fas fa-ruler me-2"></i>Tipos de Medida</h2>
         </div>
+        
         <div class="col-md-4 text-end">
             <a href="{{ route('tipomedidas.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Nueva Medida
             </a>
+            <a href="{{ route('dashboard.digitador') }}" class="btn btn-secondary">Volver</a>
         </div>
     </div>
 

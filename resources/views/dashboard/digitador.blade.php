@@ -208,7 +208,19 @@
                 </div>
             </a>
         </div>
+        <!-- Ver Precios -->
+        <div class="col-md-4 mb-3">
+    <a href="{{ route('precios.index') }}" class="card text-decoration-none border-0 shadow-sm h-100 transition">
+        <div class="card-body text-center">
+            <i class="fas fa-tag fa-3x text-warning mb-3"></i>
+            <h6 class="card-title">Gestión de Precios</h6>
+            <p class="card-text small text-muted">Administrar precios por tipo de cliente</p>
+            <small class="text-success font-weight-bold">✓ Acceso: ABM Completo</small>
+        </div>
+    </a>
+</div>
     </div>
+
 
     <!-- Restricciones -->
     <div class="alert alert-warning mt-4">

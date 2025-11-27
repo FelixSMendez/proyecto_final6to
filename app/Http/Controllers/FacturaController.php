@@ -10,6 +10,9 @@ use App\Models\UsuarioCliente;
 use App\Models\Inventario;
 use App\Models\Lote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class FacturaController extends Controller
 {
@@ -35,20 +38,42 @@ public function store(Request $request)
         $total += $item['precio'] * $item['cantidad'];
     }
 
+    $idSucursal = 1; // por defecto
+    $usuarioCliente = \App\Models\UsuarioCliente::with('cliente')->findOrFail($request->id_cliente);
+    $tipoCliente = $usuarioCliente->cliente->tipo ?? 'minorista';
+
+    // Prioridad 1: sucursal enviada por el front (si ya llamaste GPS/selección manual)
+    if ($request->filled('id_sucursal_detectada')) {
+        $idSucursal = (int) $request->id_sucursal_detectada;
+    } 
+    // Prioridad 2: si el cliente tiene lat/long guardados, calcula sucursal
+    elseif ($usuarioCliente->cliente && $usuarioCliente->cliente->tieneGps()) {
+        $resp = app(\App\Http\Controllers\SucursalGpsController::class)
+            ->sucursalMasCercana(new Request([
+                'lat' => $usuarioCliente->cliente->latitud,
+                'lng' => $usuarioCliente->cliente->longitud,
+            ]));
+
+        $data = $resp->getData(true);
+        if (!empty($data['ok']) && !empty($data['sucursal']['id'])) {
+            $idSucursal = (int) $data['sucursal']['id'];
+        }
+    }
+
     // Crear factura SIN empleado (venta web)
-    $factura = Factura::create([
+    $factura = \App\Models\Factura::create([
         'correlativo'   => $this->generarCorrelativo(),
         'letra_serie'   => 'A',
         'fecha'         => now(),
         'id_cliente'    => $request->id_cliente,
         'id_empleado'   => auth('employee')->check() ? auth('employee')->id() : null,
-        'id_sucursal'   => 1,
+        'id_sucursal'   => $idSucursal,
         'total'         => $total,
     ]);
 
     // Guardar detalles de factura (items del carrito)
     foreach ($carrito as $id => $item) {
-        DetalleFactura::create([
+        \App\Models\DetalleFactura::create([
             'id_factura'        => $factura->id,
             'id_detalleproducto'=> (int) $item['id_detalle'],
             'cantidad'          => (int) $item['cantidad'],
@@ -64,6 +89,10 @@ public function store(Request $request)
             (int) ($item['id_sucursal'] ?? 1)
         );
     }
+
+    // Limpiar carrito
+    session()->forget('carrito');
+
     return redirect()->route('factura.showPago', $factura->id);
 }
 

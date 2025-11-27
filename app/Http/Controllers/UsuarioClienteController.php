@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\UsuarioCliente;
+use Illuminate\Support\Facades\Auth;
 
 class UsuarioClienteController extends Controller
 {
@@ -56,6 +57,32 @@ class UsuarioClienteController extends Controller
     {
         $usuariocliente->delete();
         return redirect()->route('usuariocliente.index')->with('success', 'El usuario del cliente eliminado correctamente.');
+    }
+
+    /**
+     * Cambiar a login de empleado
+     */
+    public function cambiarAEmpleado()
+    {
+        // Cerrar todas las sesiones
+        Auth::guard('employee')->logout();
+        Auth::guard('cliente')->logout();
+        Auth::logout();
+        
+        session()->flush();
+        
+        return redirect()->route('login');
+    }
+
+    /**
+     * Logout de cliente
+     */
+    public function logoutCliente()
+    {
+        Auth::guard('cliente')->logout();
+        session()->flush();
+        
+        return redirect()->route('catalogo.index');
     }
 
 }

@@ -14,6 +14,7 @@
             <a href="{{ route('usuariosistema.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i> Nuevo Usuario
             </a>
+            <a href="{{ route('dashboard.digitador') }}" class="btn btn-secondary">Volver</a>
         </div>
     </div>
 

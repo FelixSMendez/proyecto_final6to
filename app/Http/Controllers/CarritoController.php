@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DetalleProducto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class CarritoController extends Controller
 {
@@ -25,6 +27,17 @@ class CarritoController extends Controller
 {
     $detalle = \App\Models\DetalleProducto::with('producto')->findOrFail($id);
 
+    // Obtener tipo de cliente
+    $tipoCliente = 'minorista';
+    if (Auth::guard('cliente')->check()) {
+        $usuarioCliente = Auth::guard('cliente')->user();
+        if ($usuarioCliente && $usuarioCliente->cliente) {
+            $tipoCliente = $usuarioCliente->cliente->tipo;
+        }
+    }
+
+    $cantidad = (int) ($request->cantidad ?? 1);
+
     $carrito = session()->get('carrito', []);
 
     // Buscar sucursal con stock (por defecto la primera)
@@ -37,20 +50,27 @@ class CarritoController extends Controller
         return back()->with('error', 'No hay stock disponible para este producto en ninguna sucursal.');
     }
 
+    // Obtener precio según tipo de cliente Y cantidad
+    $precio = $detalle->obtenerPrecio($tipoCliente, $cantidad);
+
     if (!isset($carrito[$id])) {
         $carrito[$id] = [
-            'id_detalle' => $id,
-            'nombre' => $detalle->producto->nombre,
-            'marca' => $detalle->producto->marca->nombre ?? '',
-            'medida' => $detalle->medida->nombre ?? '',
-            'color' => $detalle->color ?? '',
-            'precio' => $detalle->obtenerPrecio('minorista'),
-            'cantidad' => 0,
-            'id_sucursal' => $inventario->id_sucursal, 
+            'id_detalle'    => $id,
+            'nombre'        => $detalle->producto->nombre,
+            'marca'         => $detalle->marca->marca ?? '',
+            'medida'        => $detalle->tipoMedida->nombre ?? '',
+            'color'         => $detalle->color_acabado ?? '',
+            'precio'        => $precio,
+            'cantidad'      => 0,
+            'tipo_cliente'  => $tipoCliente,
+            'id_sucursal'   => $inventario->id_sucursal,
         ];
     }
 
-    $carrito[$id]['cantidad'] += 1;
+    $carrito[$id]['cantidad'] += $cantidad;
+
+    // Si cambió la cantidad, recalcular el precio (por si hay descuentos por volumen)
+    $carrito[$id]['precio'] = $detalle->obtenerPrecio($tipoCliente, $carrito[$id]['cantidad']);
 
     session()->put('carrito', $carrito);
 

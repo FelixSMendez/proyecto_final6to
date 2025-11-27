@@ -18,6 +18,11 @@ class Precio extends Model
         'precioVenta',
         'tipo_cliente'
     ];
+    protected $casts = [
+        'precioVenta' => 'decimal:2',
+        'cantidadminima' => 'integer',
+        'cantidadmaxima' => 'integer',
+    ];
 
     public function detalleProducto()
     {

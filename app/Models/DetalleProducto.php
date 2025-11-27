@@ -17,6 +17,7 @@ class DetalleProducto extends Model
         'descripcion',
     ];
 
+    
     public function tipoMedida()
     {
         return $this->belongsTo(TipoMedida::class, 'id_tipoMedida');
@@ -39,10 +40,23 @@ class DetalleProducto extends Model
     }
 
     // Obtener el precio de venta para un tipo de cliente específico
-    public function obtenerPrecio($tipoCliente)
+     public function obtenerPrecio($tipoCliente = 'minorista', $cantidad = 1)
     {
-        return $this->precios()
+        $precio = $this->precios()
             ->where('tipo_cliente', $tipoCliente)
-            ->first()?->precioVenta ?? 0;
+            ->where(function ($query) use ($cantidad) {
+                // Si cantidadminima es null O cantidad >= cantidadminima
+                $query->whereNull('cantidadminima')
+                      ->orWhere('cantidadminima', '<=', $cantidad);
+            })
+            ->where(function ($query) use ($cantidad) {
+                // Si cantidadmaxima es null O cantidad <= cantidadmaxima
+                $query->whereNull('cantidadmaxima')
+                      ->orWhere('cantidadmaxima', '>=', $cantidad);
+            })
+            ->orderBy('cantidadminima', 'desc')
+            ->first();
+
+        return $precio ? (float) $precio->precioVenta : 0;
     }
 }

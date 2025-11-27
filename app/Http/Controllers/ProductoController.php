@@ -7,6 +7,7 @@ use App\Models\TipoProducto;
 use Illuminate\Http\Request;
 use App\Models\DetalleProducto;
 use App\Models\Marca;
+use Illuminate\Support\Facades\Auth;
 
 class ProductoController extends Controller
 {
@@ -78,7 +79,20 @@ class ProductoController extends Controller
         $tipos = TipoProducto::all();
         $marcas = Marca::all();
         $showLoginOptions = true;
-        return view('catalogo.index', compact('detalles', 'tipos', 'marcas'));
+        $clienteLat = null;
+        $clienteLng = null;
+
+        if (Auth::guard('cliente')->check()) {
+            $usuarioCliente = Auth::guard('cliente')->user();   // modelo UsuarioCliente
+            $cliente        = $usuarioCliente->cliente;          // relación hacia Cliente
+
+            if ($cliente && $cliente->latitud && $cliente->longitud) {
+                $clienteLat = $cliente->latitud;
+                $clienteLng = $cliente->longitud;
+            }
+        }
+
+    return view('catalogo.index', compact('detalles', 'tipos', 'marcas', 'clienteLat', 'clienteLng'));
     }
 
     public function edit(Producto $producto)

@@ -11,9 +11,11 @@
             <p class="text-muted small">Tu portal de compras en Paints</p>
         </div>
         <div class="col-md-4 text-end">
-            <form action="{{ route('cliente.logout') }}" method="POST" style="display: inline;">
+            <form action="{{ route('logout.cliente') }}" method="POST" style="display: inline;">
                 @csrf
-                <button type="submit" class="btn btn-sm btn-outline-danger">Cerrar Sesión</button>
+                <button type="submit" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                </button>
             </form>
         </div>
     </div>

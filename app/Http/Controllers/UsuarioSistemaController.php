@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Empleado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class UsuarioSistemaController extends Controller
 {
@@ -60,5 +62,27 @@ class UsuarioSistemaController extends Controller
     {
         $usuariosistema->delete();
         return redirect()->route('usuariosistema.index')->with('success', 'Usuario eliminado correctamente.');
+    }
+    public function cambiarACliente()
+    {
+        // Cerrar todas las sesiones
+        Auth::guard('employee')->logout();
+        Auth::guard('cliente')->logout();
+        Auth::logout();
+        
+        session()->flush();
+        
+        return redirect()->route('usuariosclientes.login');
+    }
+
+    /**
+     * Logout de empleado
+     */
+    public function logoutEmpleado()
+    {
+        Auth::guard('employee')->logout();
+        session()->flush();
+        
+        return redirect()->route('login');
     }
 }

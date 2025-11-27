@@ -16,7 +16,13 @@ class Cliente extends Model
         'email',
         'direccion',
         'telefono',
-        'gps',
         'tipo',
+        'latitud',
+        'longitud',
     ];
+
+    public function tieneGps()
+    {
+        return !is_null($this->latitud) && !is_null($this->longitud);
+    }
 }

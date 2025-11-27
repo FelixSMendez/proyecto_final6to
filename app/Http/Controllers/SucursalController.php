@@ -24,6 +24,8 @@ class SucursalController extends Controller
             'nombre' => 'required|string|max:100',
             'direccion' => 'nullable|string|max:200',
             'ciudad' => 'nullable|string|max:100',
+            'latitud'   => 'required|numeric',
+            'longitud'  => 'required|numeric',
         ]);
 
         Sucursal::create($request->all());
@@ -42,6 +44,8 @@ class SucursalController extends Controller
             'nombre' => 'required|string|max:100',
             'direccion' => 'nullable|string|max:200',
             'ciudad' => 'nullable|string|max:100',
+            'latitud'   => 'required|numeric',
+            'longitud'  => 'required|numeric',
         ]);
 
         $sucursal->update($request->all());

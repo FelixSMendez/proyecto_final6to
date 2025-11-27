@@ -20,6 +20,8 @@ use App\Http\Controllers\TipoPagoController;
 use App\Http\Controllers\UsuarioSistemaController;
 use App\Http\Controllers\UsuarioClienteController;
 use App\Http\Controllers\EmpleadoController;
+use App\Http\Controllers\SucursalGpsController;
+use App\Http\Controllers\PrecioController;
 
 // ====================================
 // RUTAS CATÁLOGO PÚBLICO (SIN AUTH)
@@ -27,6 +29,7 @@ use App\Http\Controllers\EmpleadoController;
 Route::get('/', [ProductoController::class, 'index'])->name('home');
 Route::get('/catalogo', [ProductoController::class, 'index'])->name('catalogo.index');
 Route::get('/producto/{id}', [ProductoController::class, 'show'])->name('catalogo.show');
+Route::post('/gps/sucursal-mas-cercana', [SucursalGpsController::class, 'sucursalMasCercana'])->name('gps.sucursalMasCercana');
 
 // ====================================
 // RUTAS CARRITO PÚBLICO
@@ -48,7 +51,6 @@ Route::post('/cliente/login', [ClienteLoginController::class, 'store'])->name('c
 // ====================================
 Route::middleware(['auth:cliente'])->group(function () {
     Route::get('/cliente/dashboard', fn() => view('cliente.dashboard'))->name('cliente.dashboard');
-    Route::post('/cliente/logout', [ClienteLoginController::class, 'destroy'])->name('cliente.logout');
     Route::get('/cliente/carrito', [CarritoController::class, 'index'])->name('cliente.carrito');
     Route::get('/cliente/pedidos', fn() => view('cliente.pedidos'))->name('cliente.pedidos');
     
@@ -59,6 +61,12 @@ Route::middleware(['auth:cliente'])->group(function () {
     Route::post('/cotizaciones/{id}/estado', [App\Http\Controllers\CotizacionController::class, 'cambiarEstado'])->name('cotizacion.estado');
     Route::get('/cotizaciones/{id}/pdf', [App\Http\Controllers\CotizacionController::class, 'descargarPDF'])->name('cotizacion.pdf');
     Route::delete('/cotizaciones/{id}', [App\Http\Controllers\CotizacionController::class, 'destroy'])->name('cotizacion.destroy');
+    
+    // Logout de cliente
+    Route::post('/logout-cliente', [UsuarioClienteController::class, 'logoutCliente'])->name('logout.cliente');
+    
+    // Cambiar a login empleado
+    Route::get('/cambiar-a-empleado', [UsuarioClienteController::class, 'cambiarAEmpleado'])->name('auth.cambiar_empleado');
 });
 
 // ====================================
@@ -89,6 +97,12 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Logout de empleado
+    Route::post('/logout-empleado', [UsuarioSistemaController::class, 'logoutEmpleado'])->name('logout.empleado');
+    
+    // Cambiar a login cliente
+    Route::get('/cambiar-a-cliente', [UsuarioSistemaController::class, 'cambiarACliente'])->name('auth.cambiar_cliente');
     
     // ====================================
     // LOTES (Digitador)
@@ -134,6 +148,7 @@ Route::middleware(['auth:employee'])->group(function () {
         Route::resource('tipopagos', TipoPagoController::class);
         Route::resource('usuariosistema', UsuarioSistemaController::class);
         Route::resource('usuariocliente', UsuarioClienteController::class);
+        Route::resource('precios', PrecioController::class);
     });
     
     // ====================================
